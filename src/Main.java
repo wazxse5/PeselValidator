@@ -9,7 +9,6 @@ public class Main {
 		while(true) {
 			String pesel = JOptionPane.showInputDialog(null, "Podaj PESEL", "PeselValidator", JOptionPane.QUESTION_MESSAGE);
 			
-			
 			////// wszystko to co zły użytkownik może wpisać źle
 			boolean stringGood = true;
 			if (pesel == null) {
