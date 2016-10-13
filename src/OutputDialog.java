@@ -16,7 +16,7 @@ public class OutputDialog extends JDialog {
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setModal(true);
 		this.setLayout(null);
-		
+		//debil
 		//// w zasadzie po to żeby daty były 01 a nie 1 itd.
 		String sDay;
 		if (day < 10) sDay = "0" + day;
