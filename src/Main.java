@@ -2,9 +2,6 @@ import javax.swing.JOptionPane;
 
 
 public class Main {
-	// git test1
-	// git test2
-	// chuj ci w dupe test4
 	/**
 	 * @param args
 	 */
