@@ -61,7 +61,7 @@ public class Main {
                 boolean sex = true; // czy facet
                 if (tab[9] % 2 == 0) sex = false;
                 if (tab[9] % 2 == 1) sex = true;
-
+                // test branch javafx
                 OutputDialog out = new OutputDialog(correct, sex, birthYear, birthMonth, birthDay);
                 out.setVisible(true);
             }
