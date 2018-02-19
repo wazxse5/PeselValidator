@@ -1,6 +1,7 @@
 package com.wazxse5.fxml;
 
 import com.wazxse5.Pesel;
+import com.wazxse5.Sex;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -20,21 +21,15 @@ public class MainController {
 
     @FXML
     public void validatePesel() {
-
         Pesel pesel = new Pesel(peselField.getText().trim());
         pesel.validate();
-
 
         if (pesel.isCorrect()) {
             validateCheckBox.setSelected(true);
             validateCheckBox.setText("TAK, poprawny");
-
-
             dateLabel.setText(pesel.getBirthDate().toString());
-
-            if (pesel.getSex() == Pesel.Sex.MALE)   sexLabel.setText("Mężczyzna");
-            if (pesel.getSex() == Pesel.Sex.FEMALE) sexLabel.setText("Kobieta");
-
+            if (pesel.getSex() == Sex.MALE)   sexLabel.setText("Mężczyzna");
+            if (pesel.getSex() == Sex.FEMALE) sexLabel.setText("Kobieta");
             mainPane.setStyle("-fx-background-color: #C4FFC4");
         }
         else {

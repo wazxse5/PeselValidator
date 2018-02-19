@@ -22,7 +22,7 @@ public class Pesel {
         boolean peselGood = true;
         int[] tab = new int[11];
         int checksum;
-        int birthDay, birthMonth = 0, birthYear = 0;
+        int birthDay, birthMonth, birthYear;
 
         if (number.length() != 11) peselGood = false;
 
@@ -42,19 +42,33 @@ public class Pesel {
             checksum = checksum % 10;
             if (checksum != 0) checksum = 10 - checksum;
             this.correct = checksum == tab[10];
+
+
             birthDay = 10 * tab[4] + tab[5];
+            birthYear = 10*tab[0] + tab[1];
+            birthMonth = 10*tab[2] + tab[3];
             if (birthDay > 31) this.correct = false;
 
-            if (tab[2] == 0 || tab[2] == 1) birthMonth = 10 * tab[2] + tab[3];
-            else if (tab[2] == 2 || tab[2] == 3) birthMonth = 10 * (tab[2] - 2) + tab[3];
-            else if (tab[2] == 4 || tab[2] == 5) birthMonth = 10 * (tab[2] - 4) + tab[3];
-            else if (tab[2] == 6 || tab[2] == 7) birthMonth = 10 * (tab[2] - 6) + tab[3];
-            else if (tab[2] == 7 || tab[2] == 8) birthMonth = 10 * (tab[2] - 8) + tab[3];
-            if (tab[2] == 0 || tab[2] == 1) birthYear = 1900 + 10 * tab[0] + tab[1];
-            else if (tab[2] == 2 || tab[2] == 3) birthYear = 2000 + 10 * tab[0] + tab[1];
-            else if (tab[2] == 4 || tab[2] == 5) birthYear = 2100 + 10 * tab[0] + tab[1];
-            else if (tab[2] == 6 || tab[2] == 7) birthYear = 2200 + 10 * tab[0] + tab[1];
-            else if (tab[2] == 8 || tab[2] == 9) birthYear = 1800 + 10 * tab[0] + tab[1];
+            if (birthMonth <= 12) birthYear += 1900;
+            else if (birthMonth <= 32) {
+                birthYear += 2000;
+                birthMonth -= 20;
+            }
+            else if (birthMonth <= 52) {
+                birthYear += 2100;
+                birthMonth -= 40;
+            }
+            else if (birthMonth <= 72) {
+                birthYear += 2200;
+                birthMonth -= 60;
+            }
+            else if (birthMonth <= 92) {
+                birthYear += 1800;
+                birthMonth -= 80;
+            }
+            else this.correct = false;
+
+
             this.birthDate = LocalDate.of(birthYear, birthMonth, birthDay);
 
             if (tab[9] % 2 == 0) this.sex = Sex.FEMALE;
@@ -85,5 +99,5 @@ public class Pesel {
         return birthDate;
     }
 
-    public enum Sex {INDETERMINATE, MALE, FEMALE}
 }
+
