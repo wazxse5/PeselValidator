@@ -28,8 +28,8 @@
         </MenuBar>
         <AnchorPane prefHeight="400.0" prefWidth="600.0">
             <children>
-                <ListView maxWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
-                          AnchorPane.topAnchor="30.0"/>
+                <ListView fx:id="numberListView" maxWidth="200.0" AnchorPane.bottomAnchor="5.0"
+                          AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="30.0"/>
                 <Label alignment="CENTER" layoutX="244.0" layoutY="77.0" prefHeight="26.0" prefWidth="100.0"
                        style="-fx-border-color: LIGHTGRAY;" text="Wybór numeru" AnchorPane.leftAnchor="5.0"
                        AnchorPane.topAnchor="5.0">
@@ -47,7 +47,8 @@
                                 <Font size="18.0"/>
                             </font>
                         </TextField>
-                        <Label layoutX="40.0" layoutY="30.0" prefWidth="200.0" text="Wprowadź numer">
+                        <Label fx:id="enterNumberLabel" layoutX="40.0" layoutY="30.0" prefWidth="200.0"
+                               text="Wprowadź numer">
                             <font>
                                 <Font size="14.0"/>
                             </font>

@@ -1,9 +1,14 @@
 package com.wazxse5.fxml;
 
+import com.wazxse5.number.Nip;
 import com.wazxse5.number.Number;
 import com.wazxse5.number.Pesel;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -14,27 +19,27 @@ import javafx.scene.input.KeyEvent;
  * Ta klasa odpowiada za obsługę zdarzeń takich jak naciśnięcia przycisków, prezentację wyników czy wybór numeru do sprawdzenia poprawności.
  */
 public class MainController {
+    private Number number;
+    private String currentNumberName;
 
-    /**
-     * Pole tekstowe służące do wprowadzenia numeru do walidacji.
-     */
-    @FXML private TextField numberField;
-    /**
-     * Służy do prezentacji wyników obliczeń poprawności. Jeśli numer jest poprawny to ten <code>CheckBox jest zaznaczony</code>. Jeśli nie to jest odznaczony.
-     * Użytkownik nie może modyfikować stanu tego przycisku, ponieważ za utrzymanie jego aktualnego stanu w przypadku kliknięcia odpowiada funkcja {@link #keepCheckBoxState()}.
-     */
-    @FXML private CheckBox validateCheckBox;
-    /**
-     * To pole tekstowe służy wyświetlenia dodatkowych informacji jakie można uzyskać z numeru.
-     * Tekst w tym polu jest ustawiany przez funkcję {@link Number#getSimpleInfo()}
-     */
-    @FXML private TextField infoTextField;
-    /**
-     * To pole tekstowe będzie wyświetlać wyniki obliczeń sumy kontrolnej.
-     * Obecnie jeszcze nie działa.
-     */
-    @FXML private TextField checksumTextField;
+    @FXML private ListView<String> numberListView;  // służy do wyboru numeru do walidacji
+    @FXML private Label enterNumberLabel;           // podpis pola tekstowego do wprowadzania numeru
+    @FXML private TextField numberField;            // pole tekstowe do wprowadzania numeru
+    @FXML private CheckBox validateCheckBox;        // informuje o poprawności numeru po walidacji
+    @FXML private TextField infoTextField;          // wyświetla dodatkowe informacje możliwe do uzyskania z numeru
+    @FXML private TextField checksumTextField;      // wyświetla informacje o obliczonej sumie kontrolnej
 
+    public void initialize() {
+        ObservableList<String> numberNames = FXCollections.observableArrayList("PESEL", "NIP");
+        numberListView.setItems(numberNames);
+
+        numberListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            currentNumberName = newValue;
+            enterNumberLabel.setText("Wprowadź numer " + currentNumberName + ":");
+        });
+
+        numberListView.getSelectionModel().selectFirst();
+    }
 
     /**
      * Sprawdza poprawność wprowadzonego numeru.
@@ -43,17 +48,18 @@ public class MainController {
      */
     @FXML
     public void validateNumber() {
-        Pesel pesel = new Pesel(numberField.getText().trim());
-        pesel.validate();
+        if (currentNumberName.equals("PESEL")) number = new Pesel(numberField.getText().trim());
+        else if (currentNumberName.equals("NIP")) number = new Nip(numberField.getText().trim());
+        number.validate();
 
-        if (pesel.isCorrect()) {
+        if (number.isCorrect()) {
             validateCheckBox.setSelected(true);
             validateCheckBox.setText("TAK, poprawny");
-
-            infoTextField.setText(pesel.getSimpleInfo());
+            infoTextField.setText(number.getSimpleInfo());
         } else {
             validateCheckBox.setSelected(false);
             validateCheckBox.setText("NIE, niepoprawny");
+            infoTextField.setText("");
         }
     }
 

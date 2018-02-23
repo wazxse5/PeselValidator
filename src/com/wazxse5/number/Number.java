@@ -6,18 +6,9 @@ package com.wazxse5.number;
  */
 public abstract class Number {
 
-    /**
-     * Wartość numeru konkretnego numeru w postaci <code>String</code>
-     */
-    final String number;
-    /**
-     * Czy poprawność numeru została sprawdzona
-     */
-    boolean validated;
-    /**
-     * Czy numer jest poprawny
-     */
-    boolean correct;
+    private final String number;    // Wartość numeru konkretnego numeru w postaci String
+    private boolean validated;      // czy poprawność numeru była sprawdzana
+    private boolean correct;        // czy numer jest poprawny
 
     /**
      * Podstawowy konstruktor
@@ -52,12 +43,30 @@ public abstract class Number {
     }
 
     /**
+     * Ustawia czy numer był sprawdzany.
+     * Do wykorzystania w podklasach.
+     */
+    protected void setValidated() {
+        this.validated = true;
+    }
+
+    /**
      * Zwraca informację o tym czy poprawność numeru jest sprawdzona.
      *
      * @return <code>true</code> jeśli poprawność jest sprawdzona.
      */
     public boolean isValidated() {
         return validated;
+    }
+
+    /**
+     * Ustawia poprawność numeru.
+     * Do wykorzystania w podklasach.
+     *
+     * @param correct czy numer jest poprawny
+     */
+    protected void setCorrect(boolean correct) {
+        this.correct = correct;
     }
 
     /**

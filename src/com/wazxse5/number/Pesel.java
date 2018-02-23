@@ -2,6 +2,7 @@ package com.wazxse5.number;
 
 import com.wazxse5.Sex;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 
 /**
@@ -9,29 +10,19 @@ import java.time.LocalDate;
  * Numer PESEL jest to numer ewidencyjny osoby fizycznej wykorzystywany w polskim Powszechnym Elektronicznym Systemiw Ewidencji Ludności
  */
 public class Pesel extends Number {
+    private static final int[] weightTable = {9, 7, 3, 1, 9, 7, 3, 1, 9, 7};    // tabela wag kolejnych cyfr
+
+    private LocalDate birthDate;    // data urodzenia
+    private int age;                // wiek, liczba lat
+    private Sex sex;                // płeć
 
     /**
-     * Data urodzenia
-     */
-    private LocalDate birthDate;
-    /**
-     * Wiek, liczba lat
-     */
-    private int age;
-    /**
-     * Płeć
-     */
-    private Sex sex;
-
-    /**
-     * Przyjmuje numer pesel w postaci <code>String</code>
+     * Podstawowy konstruktor
      *
-     * @param number numer Pesel
+     * @param number numer Pesel w postaci <code>String</code>
      */
     public Pesel(String number) {
         super(number);
-        this.validated = false;
-        this.correct = false;
         this.birthDate = null;
         this.age = 0;
         this.sex = Sex.INDETERMINATE;
@@ -44,33 +35,27 @@ public class Pesel extends Number {
     public void validate() {
         boolean peselGood = true;
         int[] tab = new int[11];
-        int checksum;
+        int checksum = 0;
         int birthDay, birthMonth, birthYear;
 
-        if (number.length() != 11) peselGood = false;
-
-        for (int i = 0; i < number.length(); i++) {
-            char c = number.charAt(i);
-            if (c != '0' && c != '1' && c != '2' && c != '3' && c != '4' && c != '5' && c != '6' && c != '7' && c != '8' && c != '9') {
-                peselGood = false;
-            }
+        if (super.getNumber().length() != 11) peselGood = false;
+        for (char c : super.getNumber().toCharArray()) {
+            if (!Character.isDigit(c)) peselGood = false;
         }
 
         if (peselGood) {
             for (int i = 0; i < 11; i++) {
-                tab[i] = Character.getNumericValue(number.charAt(i));
+                tab[i] = Character.getNumericValue(super.getNumber().charAt(i));
             }
 
-            checksum = tab[0] + 3 * tab[1] + 7 * tab[2] + 9 * tab[3] + tab[4] + 3 * tab[5] + 7 * tab[6] + 9 * tab[7] + tab[8] + 3 * tab[9];
+            for (int i = 0; i < 10; i++) checksum += (tab[i] * weightTable[i]);
             checksum = checksum % 10;
-            if (checksum != 0) checksum = 10 - checksum;
-            this.correct = checksum == tab[10];
-
+            super.setCorrect(checksum == tab[10]);
 
             birthDay = 10 * tab[4] + tab[5];
             birthYear = 10 * tab[0] + tab[1];
             birthMonth = 10 * tab[2] + tab[3];
-            if (birthDay > 31) this.correct = false;
+            if (birthDay > 31) super.setCorrect(false);
 
             if (birthMonth <= 12) birthYear += 1900;
             else if (birthMonth <= 32) {
@@ -85,17 +70,19 @@ public class Pesel extends Number {
             } else if (birthMonth <= 92) {
                 birthYear += 1800;
                 birthMonth -= 80;
-            } else this.correct = false;
+            } else super.setCorrect(false);
 
-
-            this.birthDate = LocalDate.of(birthYear, birthMonth, birthDay);
-            this.age = LocalDate.now().getYear() - this.birthDate.getYear();
-
-            if (tab[9] % 2 == 0) this.sex = Sex.FEMALE;
-            if (tab[9] % 2 == 1) this.sex = Sex.MALE;
+            try {   // przydatne np. w przypadku zamiany dni z rokiem czego algorytm może nie wyłapać
+                this.birthDate = LocalDate.of(birthYear, birthMonth, birthDay);
+                this.age = LocalDate.now().getYear() - this.birthDate.getYear();
+                if (tab[9] % 2 == 0) this.sex = Sex.FEMALE;
+                if (tab[9] % 2 == 1) this.sex = Sex.MALE;
+            } catch (DateTimeException e) {
+                super.setCorrect(false);
+            }
         }
 
-        this.validated = true;
+        super.setValidated();
     }
 
     /**
@@ -105,12 +92,14 @@ public class Pesel extends Number {
      */
     @Override
     public String getSimpleInfo() {
-        StringBuilder infoBuilder = new StringBuilder();
-        if (sex == Sex.MALE) infoBuilder.append("Mężczyzna,   ur. ");
-        else if (sex == Sex.FEMALE) infoBuilder.append("Kobieta, ur. ");
-        infoBuilder.append(birthDate.toString());
-        infoBuilder.append(",   (").append(age).append(" lat)");
-        return infoBuilder.toString();
+        if (super.isCorrect()) {
+            StringBuilder infoBuilder = new StringBuilder();
+            if (sex == Sex.MALE) infoBuilder.append("Mężczyzna,   ur. ");
+            else if (sex == Sex.FEMALE) infoBuilder.append("Kobieta, ur. ");
+            infoBuilder.append(birthDate.toString());
+            infoBuilder.append(",   (").append(age).append(" lat)");
+            return infoBuilder.toString();
+        } else return "";
     }
 
     /**
