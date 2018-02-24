@@ -11,17 +11,17 @@
             <menus>
                 <Menu mnemonicParsing="false" text="Plik">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Close"/>
+                        <MenuItem mnemonicParsing="false" onAction="#exit" text="Wyjście"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Opcje">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Delete"/>
+                        <MenuItem mnemonicParsing="false" text="Szybkie sprawdzanie"/>
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Pomoc">
+                <Menu mnemonicParsing="false" onAction="#showAboutWindow" text="Pomoc">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="About"/>
+                        <MenuItem mnemonicParsing="false" text="O programie"/>
                     </items>
                 </Menu>
             </menus>
@@ -37,12 +37,12 @@
                         <Insets left="5.0" right="5.0"/>
                     </padding>
                 </Label>
-                <Pane layoutX="225.0" layoutY="30.0" onKeyPressed="#keyPressed" prefHeight="200.0" prefWidth="200.0"
+                <Pane layoutX="225.0" layoutY="30.0" prefHeight="200.0" prefWidth="200.0"
                       style="-fx-border-color: LIGHTGRAY;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="210.0"
                       AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0">
                     <children>
-                        <TextField fx:id="numberField" layoutX="40.0" layoutY="50.0" prefHeight="40.0"
-                                   prefWidth="300.0">
+                        <TextField fx:id="numberField" layoutX="40.0" layoutY="50.0" onKeyPressed="#keyPressed"
+                                   prefHeight="40.0" prefWidth="300.0">
                             <font>
                                 <Font size="18.0"/>
                             </font>
@@ -56,8 +56,8 @@
                         <HBox alignment="CENTER" layoutX="40.0" layoutY="110.0" prefHeight="40.0" prefWidth="300.0"
                               spacing="10.0">
                             <children>
-                                <Button mnemonicParsing="false" onAction="#validateNumber" prefHeight="40.0"
-                                        prefWidth="150.0" text="Sprawdź">
+                                <Button mnemonicParsing="false" onAction="#validateNumber" onKeyPressed="#keyPressed"
+                                        prefHeight="40.0" prefWidth="150.0" text="Sprawdź">
                                     <font>
                                         <Font size="16.0"/>
                                     </font>
@@ -89,8 +89,13 @@
                         <TextField fx:id="checksumTextField" editable="false" layoutX="40.0" layoutY="260.0"
                                    prefHeight="25.0" prefWidth="300.0"/>
                         <Button layoutX="40.0" layoutY="310.0" mnemonicParsing="false" onAction="#clear"
-                                onKeyPressed="#keyPressedClearButton" prefHeight="30.0" prefWidth="100.0"
-                                text="Wyczyść">
+                                prefHeight="30.0" prefWidth="100.0" text="Wyczyść">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Button>
+                        <Button layoutX="175.0" layoutY="310.0" mnemonicParsing="false" prefHeight="30.0"
+                                prefWidth="30.0" text="?">
                             <font>
                                 <Font size="14.0"/>
                             </font>
