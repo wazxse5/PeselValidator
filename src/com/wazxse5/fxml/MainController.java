@@ -1,70 +1,141 @@
 package com.wazxse5.fxml;
 
-import com.wazxse5.Pesel;
-import com.wazxse5.Sex;
+import com.wazxse5.number.Nip;
+import com.wazxse5.number.Number;
+import com.wazxse5.number.Pesel;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.IOException;
+
+/**
+ * Klasa kontrolera FXML głównego okna programu.
+ * Program składa się z jednego okna i jednej sceny.
+ * Ta klasa odpowiada za obsługę zdarzeń takich jak naciśnięcia przycisków, prezentację wyników czy wybór numeru do sprawdzenia poprawności.
+ */
 public class MainController {
+    private Number number;
+    private String currentNumberName;
 
-    @FXML private Pane mainPane;
-    @FXML private TextField peselField;
-    @FXML private CheckBox validateCheckBox;
-    @FXML private Label dateLabel;
-    @FXML private Label sexLabel;
+    @FXML private ListView<String> numberListView;  // służy do wyboru numeru do walidacji
+    @FXML private Label enterNumberLabel;           // podpis pola tekstowego do wprowadzania numeru
+    @FXML private TextField numberField;            // pole tekstowe do wprowadzania numeru
+    @FXML private CheckBox validateCheckBox;        // informuje o poprawności numeru po walidacji
+    @FXML private TextField infoTextField;          // wyświetla dodatkowe informacje możliwe do uzyskania z numeru
+    @FXML private TextField checksumTextField;      // wyświetla informacje o obliczonej sumie kontrolnej
 
+    public void initialize() {
+        // utworzenie listy z dostępnymi numerami do wyboru
+        ObservableList<String> numberNames = FXCollections.observableArrayList("PESEL", "NIP");
+        numberListView.setItems(numberNames);
 
-    @FXML
-    public void validatePesel() {
-        Pesel pesel = new Pesel(peselField.getText().trim());
-        pesel.validate();
+        // ustawienie listenera do listy numerów
+        numberListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            currentNumberName = newValue;
+            enterNumberLabel.setText("Wprowadź numer " + currentNumberName + ":");
+        });
 
-        if (pesel.isCorrect()) {
+        // ustawienie zaznaczenia pierwszego numeru na liście
+        numberListView.getSelectionModel().selectFirst();
+
+        // ustwianie fokusa na pole wprowadzania numeru
+        Platform.runLater(() -> numberField.requestFocus());
+    }
+
+    /**
+     * Sprawdza poprawność wprowadzonego numeru.
+     * Tworzy odpowiedni obiekt numeru, a następnie wywołuje na nim metodę {@link Number#validate()}.
+     * Jeśli numer jest poprawny to pobiera i wyświetla odpowiednie informacje.
+     */
+    @FXML public void validateNumber() {
+        // wybór odpowiedniego rodzaju numeru
+        if (currentNumberName.equals("PESEL")) number = new Pesel(numberField.getText().trim());
+        else if (currentNumberName.equals("NIP")) number = new Nip(numberField.getText().trim());
+        number.validate();
+
+        // ustawienie pól na odpowiednie wartości
+        if (number.isCorrect()) {
             validateCheckBox.setSelected(true);
             validateCheckBox.setText("TAK, poprawny");
-            dateLabel.setText(pesel.getBirthDate().toString());
-            if (pesel.getSex() == Sex.MALE)   sexLabel.setText("Mężczyzna");
-            if (pesel.getSex() == Sex.FEMALE) sexLabel.setText("Kobieta");
-            mainPane.setStyle("-fx-background-color: #C4FFC4");
-        }
-        else {
+            infoTextField.setText(number.getAdditionalInfo());
+        } else {
             validateCheckBox.setSelected(false);
             validateCheckBox.setText("NIE, niepoprawny");
-            dateLabel.setText("");
-            sexLabel.setText("");
-            mainPane.setStyle("-fx-background-color: #FFC4C4");
+            infoTextField.setText("");
         }
     }
 
-    @FXML
-    public void clear() {
-        mainPane.setStyle("-fx-background-color: ghostwhite");
-        peselField.setText("");
-        validateCheckBox.setSelected(false);
-        validateCheckBox.setText("");
-        dateLabel.setText("");
-        sexLabel.setText("");
+    /**
+     * Wyświetla okienienko informacyjne z paska menu.
+     */
+    @FXML public void showAboutWindow() {
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("AboutProgramScreen.fxml"));
+        try {
+            Scene scene = new Scene(loader.load());
+            Stage aboutStage = new Stage();
+
+            AboutProgramController aboutController = loader.getController();
+            aboutController.setAboutStage(aboutStage);
+
+            aboutStage.setTitle("O programie");
+            aboutStage.setResizable(false);
+            aboutStage.initOwner(numberField.getScene().getWindow());
+            aboutStage.initModality(Modality.APPLICATION_MODAL);
+
+            aboutStage.setScene(scene);
+            aboutStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @FXML
-    public void keyPressed(KeyEvent event) {
+    /**
+     * Dzięki tej metodzie możliwe jest wywołanie metody {@link #validateNumber()} za pomocą klawisza ENTER.
+     * Natomiast jeśli zostanie naciśnięty klawisz ESCAPE to zostanie wywołana metoda {@link #clear()}
+     *
+     * @param event umożliwia określenie który klawisz został naciśnięty
+     */
+    @FXML public void keyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.ESCAPE) clear();
-        if (event.getCode() == KeyCode.ENTER) validatePesel();
+        if (event.getCode() == KeyCode.ENTER) validateNumber();
     }
 
-    @FXML
-    public void keyPressedClearButton(KeyEvent event) {
-        if (event.getCode() == KeyCode.ENTER) clear();
-    }
-
-    @FXML
-    public void keepCheckBoxState() {
+    /**
+     * Ta metoda pozwala zachować aktualny stan {@link #validateCheckBox} w przypdaku gdyby użytkownik w niego kliknął.
+     */
+    @FXML public void keepCheckBoxState() {
         if (validateCheckBox.isSelected()) validateCheckBox.setSelected(false);
         else validateCheckBox.setSelected(true);
+    }
+
+    /**
+     * Czyści wszystkie pola tekstowe i CheckBox.
+     */
+    @FXML public void clear() {
+        numberField.setText("");
+        validateCheckBox.setSelected(false);
+        validateCheckBox.setText("Nie sprawdzono");
+        infoTextField.setText("");
+        checksumTextField.setText("");
+    }
+
+    /**
+     * Kończy działanie programu.
+     */
+    @FXML public void exit() {
+        System.exit(0);
     }
 }

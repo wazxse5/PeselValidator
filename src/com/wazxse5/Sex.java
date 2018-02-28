@@ -1,3 +1,15 @@
 package com.wazxse5;
 
-public enum Sex {INDETERMINATE, MALE, FEMALE}
+/**
+ * Pozwala określić trzy możliwe wartości płci.
+ */
+public enum Sex {
+    /**
+     * nieokreślony
+     */
+    INDETERMINATE,
+    /** mężczyzna */
+    MALE,
+    /** kobieta */
+    FEMALE
+}
