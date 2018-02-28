@@ -3,6 +3,7 @@ package com.wazxse5.fxml;
 import com.wazxse5.number.Nip;
 import com.wazxse5.number.Number;
 import com.wazxse5.number.Pesel;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -48,6 +49,9 @@ public class MainController {
 
         // ustawienie zaznaczenia pierwszego numeru na liście
         numberListView.getSelectionModel().selectFirst();
+
+        // ustwianie fokusa na pole wprowadzania numeru
+        Platform.runLater(() -> numberField.requestFocus());
     }
 
     /**
@@ -65,7 +69,7 @@ public class MainController {
         if (number.isCorrect()) {
             validateCheckBox.setSelected(true);
             validateCheckBox.setText("TAK, poprawny");
-            infoTextField.setText(number.getSimpleInfo());
+            infoTextField.setText(number.getAdditionalInfo());
         } else {
             validateCheckBox.setSelected(false);
             validateCheckBox.setText("NIE, niepoprawny");

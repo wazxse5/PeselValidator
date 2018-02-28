@@ -38,10 +38,8 @@ public class Pesel extends Number {
         int checksum = 0;
         int birthDay, birthMonth, birthYear;
 
+        if (super.getNumber() == null) peselGood = false;
         if (super.getNumber().length() != 11) peselGood = false;
-        for (char c : super.getNumber().toCharArray()) {
-            if (!Character.isDigit(c)) peselGood = false;
-        }
 
         if (peselGood) {
             for (int i = 0; i < 11; i++) {
@@ -91,7 +89,7 @@ public class Pesel extends Number {
      * @return informacje w postaci String
      */
     @Override
-    public String getSimpleInfo() {
+    public String getAdditionalInfo() {
         if (super.isCorrect()) {
             StringBuilder infoBuilder = new StringBuilder();
             if (sex == Sex.MALE) infoBuilder.append("Mężczyzna,   ur. ");

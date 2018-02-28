@@ -16,7 +16,11 @@ public abstract class Number {
      * @param number numer w postaci <code>String</code>
      */
     public Number(String number) {
-        this.number = number;
+        StringBuilder builder = new StringBuilder();
+        for (char c : number.toCharArray()) {
+            if (Character.isDigit(c)) builder.append(c);
+        }
+        this.number = builder.toString();
         this.validated = false;
         this.correct = false;
     }
@@ -31,7 +35,7 @@ public abstract class Number {
      *
      * @return informacje w postaci String
      */
-    public abstract String getSimpleInfo();
+    public abstract String getAdditionalInfo();
 
     /**
      * Zwraca numer.

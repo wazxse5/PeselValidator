@@ -38,10 +38,8 @@ public class Nip extends Number {
         int[] tab = new int[10];
         int checksum = 0;
 
+        if (super.getNumber() == null) nipGood = false;
         if (super.getNumber().length() != 10) nipGood = false;
-        for (char c : super.getNumber().toCharArray()) {
-            if (!Character.isDigit(c)) nipGood = false;
-        }
 
         if (nipGood) {
             for (int i = 0; i < 10; i++) {
@@ -62,7 +60,7 @@ public class Nip extends Number {
      * @return informacje w postaci String
      */
     @Override
-    public String getSimpleInfo() {
+    public String getAdditionalInfo() {
         if (taxOffices != null) {
             String officeCode = super.getNumber().substring(0, 3);
             return taxOffices.getProperty(officeCode);
