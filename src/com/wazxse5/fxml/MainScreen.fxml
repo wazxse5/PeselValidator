@@ -16,7 +16,8 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Opcje">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Szybkie sprawdzanie"/>
+                        <CheckMenuItem mnemonicParsing="false" text="Szybkie sprawdzanie"/>
+                        <CheckMenuItem mnemonicParsing="false" text="Zapamiętaj stan programu"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" onAction="#showAboutWindow" text="Pomoc">
@@ -93,18 +94,27 @@
                             <font>
                                 <Font size="14.0"/>
                             </font>
+                            <tooltip>
+                                <Tooltip text="Czyści wszystkie pola"/>
+                            </tooltip>
                         </Button>
                         <Button layoutX="175.0" layoutY="310.0" mnemonicParsing="false" prefHeight="30.0"
                                 prefWidth="30.0" text="?">
                             <font>
                                 <Font size="14.0"/>
                             </font>
+                            <tooltip>
+                                <Tooltip text="Wyświetla informacje o wybranym numerze"/>
+                            </tooltip>
                         </Button>
                         <Button layoutX="240.0" layoutY="310.0" mnemonicParsing="false" onAction="#exit"
                                 prefHeight="30.0" prefWidth="100.0" text="Wyjdź">
                             <font>
                                 <Font size="14.0"/>
                             </font>
+                            <tooltip>
+                                <Tooltip text="Zamyka program"/>
+                            </tooltip>
                         </Button>
                     </children>
                 </Pane>

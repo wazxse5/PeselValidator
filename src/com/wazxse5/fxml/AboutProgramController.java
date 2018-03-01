@@ -19,7 +19,7 @@ public class AboutProgramController {
                 "Wprzyszłości zostanie dodana obsługa kolejnych numerów np. numer Regon czy numer dowodu osobistego");
 
         authorLabel.setText("Autor: Paweł Grzegórzko, wazxse5");
-        versionLabel.setText("Wersja: v2.0-beta, 24 lutego 2018");
+        versionLabel.setText("Wersja: v2.0-beta, 01 marca 2018");
     }
 
     @FXML public void close() {
