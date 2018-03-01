@@ -3,6 +3,7 @@ package com.wazxse5.fxml;
 import com.wazxse5.number.Nip;
 import com.wazxse5.number.Number;
 import com.wazxse5.number.Pesel;
+import com.wazxse5.number.Regon;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,7 +39,7 @@ public class MainController {
 
     public void initialize() {
         // utworzenie listy z dostępnymi numerami do wyboru
-        ObservableList<String> numberNames = FXCollections.observableArrayList("PESEL", "NIP");
+        ObservableList<String> numberNames = FXCollections.observableArrayList("PESEL", "NIP", "REGON");
         numberListView.setItems(numberNames);
 
         // ustawienie listenera do listy numerów
@@ -63,6 +64,8 @@ public class MainController {
         // wybór odpowiedniego rodzaju numeru
         if (currentNumberName.equals("PESEL")) number = new Pesel(numberField.getText().trim());
         else if (currentNumberName.equals("NIP")) number = new Nip(numberField.getText().trim());
+        else if (currentNumberName.equals("REGON")) number = new Regon(numberField.getText().trim());
+
         number.validate();
 
         // ustawienie pól na odpowiednie wartości
