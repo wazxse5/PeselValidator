@@ -16,7 +16,8 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Opcje">
                     <items>
-                        <CheckMenuItem mnemonicParsing="false" text="Szybkie sprawdzanie"/>
+                        <CheckMenuItem fx:id="quickValidationCheckItem" mnemonicParsing="false"
+                                       onAction="#validateNumber" text="Szybkie sprawdzanie"/>
                         <CheckMenuItem mnemonicParsing="false" text="Zapamiętaj stan programu"/>
                     </items>
                 </Menu>

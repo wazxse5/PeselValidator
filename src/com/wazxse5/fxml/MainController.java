@@ -10,10 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
@@ -28,14 +25,15 @@ import java.io.IOException;
  */
 public class MainController {
     private Number number;
-    private String currentNumberName;
+    private String selectedNumberName;
 
-    @FXML private ListView<String> numberListView;  // służy do wyboru numeru do walidacji
-    @FXML private Label enterNumberLabel;           // podpis pola tekstowego do wprowadzania numeru
-    @FXML private TextField numberField;            // pole tekstowe do wprowadzania numeru
-    @FXML private CheckBox validateCheckBox;        // informuje o poprawności numeru po walidacji
-    @FXML private TextField infoTextField;          // wyświetla dodatkowe informacje możliwe do uzyskania z numeru
-    @FXML private TextField checksumTextField;      // wyświetla informacje o obliczonej sumie kontrolnej
+    @FXML private ListView<String> numberListView;              // służy do wyboru numeru do walidacji
+    @FXML private Label enterNumberLabel;                       // podpis pola tekstowego do wprowadzania numeru
+    @FXML private TextField numberField;                        // pole tekstowe do wprowadzania numeru
+    @FXML private CheckBox validateCheckBox;                    // informuje o poprawności numeru po walidacji
+    @FXML private TextField infoTextField;                      // wyświetla dodatkowe informacje możliwe do uzyskania z numeru
+    @FXML private TextField checksumTextField;                  // wyświetla informacje o obliczonej sumie kontrolnej
+    @FXML private CheckMenuItem quickValidationCheckItem;       // ustawia czy ma być włączone szybkie sprawdzanie
 
     public void initialize() {
         // utworzenie listy z dostępnymi numerami do wyboru
@@ -44,14 +42,20 @@ public class MainController {
 
         // ustawienie listenera do listy numerów
         numberListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            currentNumberName = newValue;
-            enterNumberLabel.setText("Wprowadź numer " + currentNumberName + ":");
+            selectedNumberName = newValue;
+            enterNumberLabel.setText("Wprowadź numer " + selectedNumberName + ":");
+            if (quickValidationCheckItem.isSelected()) validateNumber();
         });
 
         // ustawienie zaznaczenia pierwszego numeru na liście
         numberListView.getSelectionModel().selectFirst();
 
-        // ustwianie fokusa na pole wprowadzania numeru
+        // dodanie listenera na zmianę wprowadzonego numeru
+        numberField.textProperty().addListener((observable) -> {
+            if (quickValidationCheckItem.isSelected()) this.validateNumber();
+        });
+
+        // ustawianie fokusa na pole wprowadzania numeru
         Platform.runLater(() -> numberField.requestFocus());
     }
 
@@ -62,9 +66,17 @@ public class MainController {
      */
     @FXML public void validateNumber() {
         // wybór odpowiedniego rodzaju numeru
-        if (currentNumberName.equals("PESEL")) number = new Pesel(numberField.getText().trim());
-        else if (currentNumberName.equals("NIP")) number = new Nip(numberField.getText().trim());
-        else if (currentNumberName.equals("REGON")) number = new Regon(numberField.getText().trim());
+        switch (selectedNumberName) {
+            case "PESEL":
+                number = new Pesel(numberField.getText().trim());
+                break;
+            case "NIP":
+                number = new Nip(numberField.getText().trim());
+                break;
+            case "REGON":
+                number = new Regon(numberField.getText().trim());
+                break;
+        }
 
         number.validate();
 
@@ -139,6 +151,31 @@ public class MainController {
      * Kończy działanie programu.
      */
     @FXML public void exit() {
-        System.exit(0);
+        Platform.exit();
     }
+
+    public int getSelectedNumberIndex() {
+        return numberListView.getSelectionModel().getSelectedIndex();
+    }
+
+    public void setSelectedNumberIndex(int i) {
+        numberListView.getSelectionModel().select(i);
+    }
+
+    public String getNumberText() {
+        return numberField.getText();
+    }
+
+    public void setNumberText(String numberText) {
+        this.numberField.setText(numberText);
+    }
+
+    public boolean isQuickValidationEnabled() {
+        return quickValidationCheckItem.isSelected();
+    }
+
+    public void setQuickValidationEnabled(boolean enabled) {
+        quickValidationCheckItem.setSelected(enabled);
+    }
+
 }
