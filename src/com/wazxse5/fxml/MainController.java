@@ -52,7 +52,10 @@ public class MainController {
 
         // dodanie listenera na zmianę wprowadzonego numeru
         numberField.textProperty().addListener((observable) -> {
-            if (quickValidationCheckItem.isSelected()) this.validateNumber();
+            if (numberField.getText().equals("")) {
+                validateCheckBox.setSelected(false);
+                validateCheckBox.setText("Nie sprawdzono");
+            } else if (quickValidationCheckItem.isSelected()) this.validateNumber();
         });
 
         // ustawianie fokusa na pole wprowadzania numeru
