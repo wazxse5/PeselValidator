@@ -17,10 +17,6 @@ public class Main extends Application {
         Application.launch(args);
     }
 
-    @Override
-    public void init() {
-        programSettings = new Settings();
-    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -28,6 +24,7 @@ public class Main extends Application {
         Scene scene = new Scene(loader.load());
         MainController controller = loader.getController();
 
+        programSettings = new Settings();
         programSettings.setMainController(controller);
         programSettings.setPrimaryStage(primaryStage);
         programSettings.apply();

@@ -49,7 +49,7 @@
                                 <Font size="18.0"/>
                             </font>
                         </TextField>
-                        <Label fx:id="enterNumberLabel" layoutX="40.0" layoutY="30.0" prefWidth="200.0"
+                        <Label fx:id="numberFieldLabel" layoutX="40.0" layoutY="30.0" prefWidth="200.0"
                                text="Wprowadź numer">
                             <font>
                                 <Font size="14.0"/>

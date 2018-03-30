@@ -5,6 +5,11 @@ import com.wazxse5.number.Number;
 import com.wazxse5.number.Pesel;
 import com.wazxse5.number.Regon;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,10 +30,11 @@ import java.io.IOException;
  */
 public class MainController {
     private Number number;
-    private String selectedNumberName;
+    private StringProperty selectedNumberName;                  // nazwa zaznaczonego numeru (PESEL, NIP itd.)
+    private BooleanProperty quickValidationEnabled;
 
     @FXML private ListView<String> numberListView;              // służy do wyboru numeru do walidacji
-    @FXML private Label enterNumberLabel;                       // podpis pola tekstowego do wprowadzania numeru
+    @FXML private Label numberFieldLabel;                       // podpis pola tekstowego do wprowadzania numeru
     @FXML private TextField numberField;                        // pole tekstowe do wprowadzania numeru
     @FXML private CheckBox validateCheckBox;                    // informuje o poprawności numeru po walidacji
     @FXML private TextField infoTextField;                      // wyświetla dodatkowe informacje możliwe do uzyskania z numeru
@@ -36,29 +42,42 @@ public class MainController {
     @FXML private CheckMenuItem quickValidationCheckItem;       // ustawia czy ma być włączone szybkie sprawdzanie
 
     public void initialize() {
-        // utworzenie listy z dostępnymi numerami do wyboru
+        // Utworzenie listy z dostępnymi numerami do wyboru
         ObservableList<String> numberNames = FXCollections.observableArrayList("PESEL", "NIP", "REGON");
+        // Załadowanie listy numerów do ListView
         numberListView.setItems(numberNames);
+        // ustawienie zaznaczenia PESEL na liście
+        numberListView.getSelectionModel().select("PESEL");
 
-        // ustawienie listenera do listy numerów
-        numberListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            selectedNumberName = newValue;
-            enterNumberLabel.setText("Wprowadź numer " + selectedNumberName + ":");
-            if (quickValidationCheckItem.isSelected()) validateNumber();
+
+        // Zapamiętuje zaznaczony aktualnie numer
+        selectedNumberName = new SimpleStringProperty();
+        // Zbindowanie do aktualnie zaznaczonego numeru w ListView
+        selectedNumberName.bind(numberListView.getSelectionModel().selectedItemProperty());
+        // Zbindowanie zaznaczonego numeru do Labala który zachęca do wprowadzenia numeru
+        numberFieldLabel.textProperty().bind(Bindings.concat("Wprowadź numer ", selectedNumberName, ":"));
+
+
+        // Ustawienie listenera na zmianę numeru, jeśli jest szybkie sprawdzanie do po zmianie numeru w ListView
+        // trzeba automatycznie walidować numer
+        selectedNumberName.addListener((observable, oldValue, newValue) -> {
+            numberListView.getSelectionModel().select(selectedNumberName.getValue());
+            if (quickValidationEnabled.getValue()) validateNumber();
         });
 
-        // ustawienie zaznaczenia pierwszego numeru na liście
-        numberListView.getSelectionModel().selectFirst();
 
-        // dodanie listenera na zmianę wprowadzonego numeru
+        quickValidationEnabled = new SimpleBooleanProperty();
+        quickValidationEnabled.bindBidirectional(quickValidationCheckItem.selectedProperty());
+        // Dodanie listenera na zmianę wprowadzonego numeru
         numberField.textProperty().addListener((observable) -> {
             if (numberField.getText().equals("")) {
                 validateCheckBox.setSelected(false);
                 validateCheckBox.setText("Nie sprawdzono");
-            } else if (quickValidationCheckItem.isSelected()) this.validateNumber();
+            } else if (quickValidationEnabled.getValue()) this.validateNumber();
         });
 
-        // ustawianie fokusa na pole wprowadzania numeru
+
+        // Ustawianie fokusa na pole wprowadzania numeru
         Platform.runLater(() -> numberField.requestFocus());
     }
 
@@ -69,15 +88,15 @@ public class MainController {
      */
     @FXML public void validateNumber() {
         // wybór odpowiedniego rodzaju numeru
-        switch (selectedNumberName) {
+        switch (selectedNumberName.getValue()) {
             case "PESEL":
-                number = new Pesel(numberField.getText().trim());
+                number = new Pesel(numberField.getText());
                 break;
             case "NIP":
-                number = new Nip(numberField.getText().trim());
+                number = new Nip(numberField.getText());
                 break;
             case "REGON":
-                number = new Regon(numberField.getText().trim());
+                number = new Regon(numberField.getText());
                 break;
         }
 
@@ -157,12 +176,12 @@ public class MainController {
         Platform.exit();
     }
 
-    public int getSelectedNumberIndex() {
-        return numberListView.getSelectionModel().getSelectedIndex();
+    public String getSelectedNumberName() {
+        return selectedNumberName.getValue();
     }
 
-    public void setSelectedNumberIndex(int i) {
-        numberListView.getSelectionModel().select(i);
+    public void setSelectedNumberName(String selectedNumberName) {
+        numberListView.getSelectionModel().select(selectedNumberName);
     }
 
     public String getNumberText() {

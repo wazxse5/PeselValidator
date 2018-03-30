@@ -16,6 +16,7 @@ public abstract class Number {
      * @param number numer w postaci <code>String</code>
      */
     public Number(String number) {
+        number = number.trim();
         StringBuilder builder = new StringBuilder();
         for (char c : number.toCharArray()) {
             if (Character.isDigit(c)) builder.append(c);
