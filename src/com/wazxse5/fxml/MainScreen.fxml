@@ -90,7 +90,7 @@
                         </TextField>
                         <TextField fx:id="checksumTextField" editable="false" layoutX="40.0" layoutY="260.0"
                                    prefHeight="25.0" prefWidth="300.0"/>
-                        <Button layoutX="40.0" layoutY="310.0" mnemonicParsing="false" onAction="#clear"
+                        <Button layoutX="40.0" layoutY="310.0" mnemonicParsing="false" onAction="#clearFields"
                                 prefHeight="30.0" prefWidth="100.0" text="Wyczyść">
                             <font>
                                 <Font size="14.0"/>

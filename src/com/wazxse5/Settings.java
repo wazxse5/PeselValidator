@@ -1,6 +1,7 @@
 package com.wazxse5;
 
 import com.wazxse5.fxml.MainController;
+import javafx.beans.property.*;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -15,71 +16,98 @@ public class Settings {
     private Stage primaryStage;
     private MainController mainController;
 
-    private Properties settingsProperties;
+    private Properties settings;
     private File settingsFile;
-    
 
-    public Settings() {
-        settingsProperties = new Properties();
-        loadDefault();
+    private DoubleProperty stageX;
+    private DoubleProperty stageY;
+    private DoubleProperty stageWidth;
+    private DoubleProperty stageHeight;
+    private StringProperty numberText;
+    private StringProperty selectedNumberName;
+    private BooleanProperty quickValidationEnabled;
+
+    public Settings(Stage primaryStage, MainController mainController) {
+        this.primaryStage = primaryStage;
+        this.mainController = mainController;
+
+        // Utworzenie property do odczytywania i tam gdzie się da do zapisywania wartości ustawień
+        stageX = new SimpleDoubleProperty();
+        stageY = new SimpleDoubleProperty();
+        stageWidth = new SimpleDoubleProperty();
+        stageHeight = new SimpleDoubleProperty();
+        numberText = new SimpleStringProperty();
+        selectedNumberName = new SimpleStringProperty();
+        quickValidationEnabled = new SimpleBooleanProperty();
+
+        // Zbindowanie do odpowienich property w primaryStage i mainController
+        // tam gdzie się da, to używam Bidirectional
+        stageX.bind(primaryStage.xProperty());
+        stageY.bind(primaryStage.yProperty());
+        stageWidth.bind(primaryStage.widthProperty());
+        stageHeight.bind(primaryStage.heightProperty());
+        numberText.bindBidirectional(mainController.numberTextProperty());
+        selectedNumberName.bind(mainController.selectedNumberNameProperty());
+        quickValidationEnabled.bindBidirectional(mainController.quickValidationEnabledProperty());
+
+        // Utworzenie ustawień i załadowanie domyślnych wartości
+        settings = new Properties();
+        settings.put("stageX", "400.0");
+        settings.put("stageY", "200.0");
+        settings.put("stageWidth", "616.0");
+        settings.put("stageHeight", "464.0");
+        settings.put("numberText", "");
+        settings.put("selectedNumberName", "PESEL");
+        settings.put("quickValidationEnabled", "true");
     }
 
-    public void loadDefault() {
+    public void load() {
+        // Przejście do katalogu użytkownika
         String userDir = System.getProperty("user.home");
+        // Utworzenie osobnego katalogu jeśli go nie ma
         File settingsDir = new File(userDir, ".peselValidator");
         if (!settingsDir.exists()) settingsDir.mkdir();
+        // Próba otwarcia pliku ustawień
         settingsFile = new File(settingsDir, "settings.piwo");
-        if (settingsFile.exists()) {
-            try {
-                FileInputStream input = new FileInputStream(settingsFile);
-                settingsProperties.load(input);
-            } catch (java.io.IOException e) {
-                e.printStackTrace();
-            }
-        }
-        else {
-            settingsProperties.put("positionX", "400.0");
-            settingsProperties.put("positionY", "200.0");
-            settingsProperties.put("sizeX", "616.0");
-            settingsProperties.put("sizeY", "464.0");
-            settingsProperties.put("selectedNumberName", "PESEL");
-            settingsProperties.put("numberText", "");
-            settingsProperties.put("quickValidationEnabled", "true");
+        try {
+            FileInputStream input = new FileInputStream(settingsFile);
+            settings.load(input);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.err.println("Nie udało się wczytać pliku ustawień");
         }
     }
 
     public void apply() {
-        primaryStage.setX(Double.parseDouble(settingsProperties.getProperty("positionX")));
-        primaryStage.setY(Double.parseDouble(settingsProperties.getProperty("positionY")));
-        primaryStage.setWidth(Double.parseDouble(settingsProperties.getProperty("sizeX")));
-        primaryStage.setHeight(Double.parseDouble(settingsProperties.getProperty("sizeY")));
-        mainController.setQuickValidationEnabled(Boolean.parseBoolean(settingsProperties.getProperty("quickValidationEnabled")));
-        mainController.setSelectedNumberName(settingsProperties.getProperty("selectedNumberName"));
-        mainController.setNumberText(settingsProperties.getProperty("numberText"));
+        // Załadowanie ustawień do primaryStage i mainController
+        primaryStage.setX(Double.parseDouble(settings.getProperty("stageX")));
+        primaryStage.setY(Double.parseDouble(settings.getProperty("stageY")));
+        primaryStage.setWidth(Double.parseDouble(settings.getProperty("stageWidth")));
+        primaryStage.setHeight(Double.parseDouble(settings.getProperty("stageHeight")));
+
+        numberText.set(settings.getProperty("numberText"));
+        // musi być tak bo property z ListView jest tylko do odczytu
+        mainController.setSelectedNumberName(settings.getProperty("selectedNumberName"));
+        quickValidationEnabled.set(Boolean.parseBoolean(settings.getProperty("quickValidationEnabled")));
     }
 
     public void save() {
-        settingsProperties.put("positionX", String.valueOf(primaryStage.getX()));
-        settingsProperties.put("positionY", String.valueOf(primaryStage.getY()));
-        settingsProperties.put("sizeX", String.valueOf(primaryStage.getWidth()));
-        settingsProperties.put("sizeY", String.valueOf(primaryStage.getHeight()));
-        settingsProperties.put("selectedNumberName", mainController.getSelectedNumberName());
-        settingsProperties.put("numberText", mainController.getNumberText());
-        settingsProperties.put("quickValidationEnabled", String.valueOf(mainController.isQuickValidationEnabled()));
+        // Włożenie odpowiednich wartości do Properties settings
+        settings.put("stageX", Double.toString(stageX.get()));
+        settings.put("stageY", Double.toString(stageY.get()));
+        settings.put("stageWidth", Double.toString(stageWidth.get()));
+        settings.put("stageHeight", Double.toString(stageHeight.get()));
+        settings.put("numberText", numberText.get());
+        settings.put("selectedNumberName", selectedNumberName.get());
+        settings.put("quickValidationEnabled", Boolean.toString(quickValidationEnabled.get()));
 
+        // Próba zapisu
         try {
             FileOutputStream output = new FileOutputStream(settingsFile);
-            settingsProperties.store(output, "Setting");
+            settings.store(output, "Setting");
         } catch (java.io.IOException e) {
             e.printStackTrace();
+            System.err.println("Nie udało się zapisać ustawień do pliku");
         }
-    }
-
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
-
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
     }
 }

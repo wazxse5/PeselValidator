@@ -30,16 +30,17 @@ import java.io.IOException;
  */
 public class MainController {
     private Number number;
-    private StringProperty selectedNumberName;                  // nazwa zaznaczonego numeru (PESEL, NIP itd.)
-    private BooleanProperty quickValidationEnabled;
+    private StringProperty numberText;                     // tekst z pola tekstowego do wprowadzania numeru
+    private StringProperty selectedNumberName;             // nazwa zaznaczonego numeru (PESEL, NIP itd.)
+    private BooleanProperty quickValidationEnabled;        // czy jest włączone szybkie sprawdzanie
 
-    @FXML private ListView<String> numberListView;              // służy do wyboru numeru do walidacji
-    @FXML private Label numberFieldLabel;                       // podpis pola tekstowego do wprowadzania numeru
-    @FXML private TextField numberField;                        // pole tekstowe do wprowadzania numeru
-    @FXML private CheckBox validateCheckBox;                    // informuje o poprawności numeru po walidacji
-    @FXML private TextField infoTextField;                      // wyświetla dodatkowe informacje możliwe do uzyskania z numeru
-    @FXML private TextField checksumTextField;                  // wyświetla informacje o obliczonej sumie kontrolnej
-    @FXML private CheckMenuItem quickValidationCheckItem;       // ustawia czy ma być włączone szybkie sprawdzanie
+    @FXML private ListView<String> numberListView;         // służy do wyboru numeru do walidacji
+    @FXML private Label numberFieldLabel;                  // podpis pola tekstowego do wprowadzania numeru
+    @FXML private TextField numberField;                   // pole tekstowe do wprowadzania numeru
+    @FXML private CheckBox validateCheckBox;               // informuje o poprawności numeru po walidacji
+    @FXML private TextField infoTextField;                 // wyświetla dodatkowe info możliwe do uzyskania z numeru
+    @FXML private TextField checksumTextField;             // wyświetla informacje o obliczonej sumie kontrolnej
+    @FXML private CheckMenuItem quickValidationCheckItem;  // ustawia czy ma być włączone szybkie sprawdzanie
 
     public void initialize() {
         // Utworzenie listy z dostępnymi numerami do wyboru
@@ -50,31 +51,27 @@ public class MainController {
         numberListView.getSelectionModel().select("PESEL");
 
 
-        // Zapamiętuje zaznaczony aktualnie numer
+        // Property które zapamiętuje aktualnie wprowadzony numer
+        numberText = new SimpleStringProperty();
+        numberText.bindBidirectional(numberField.textProperty());
+        // Dodanie listenera na zmianę wprowadzonego numeru
+        numberText.addListener(observable1 -> textOrSelectionChanged());
+
+
+        // Property które zapamiętuje zaznaczony aktualnie numer
         selectedNumberName = new SimpleStringProperty();
         // Zbindowanie do aktualnie zaznaczonego numeru w ListView
         selectedNumberName.bind(numberListView.getSelectionModel().selectedItemProperty());
         // Zbindowanie zaznaczonego numeru do Labala który zachęca do wprowadzenia numeru
         numberFieldLabel.textProperty().bind(Bindings.concat("Wprowadź numer ", selectedNumberName, ":"));
+        // Ustawienie listenera na zmianę numeru
+        selectedNumberName.addListener(observable -> textOrSelectionChanged());
 
 
-        // Ustawienie listenera na zmianę numeru, jeśli jest szybkie sprawdzanie do po zmianie numeru w ListView
-        // trzeba automatycznie walidować numer
-        selectedNumberName.addListener((observable, oldValue, newValue) -> {
-            numberListView.getSelectionModel().select(selectedNumberName.getValue());
-            if (quickValidationEnabled.getValue()) validateNumber();
-        });
-
-
+        // Property które zapamiętuje czy jest włączone szybkie sprawdzanie
         quickValidationEnabled = new SimpleBooleanProperty();
+        // Zbindowanie do CheckMenuItema
         quickValidationEnabled.bindBidirectional(quickValidationCheckItem.selectedProperty());
-        // Dodanie listenera na zmianę wprowadzonego numeru
-        numberField.textProperty().addListener((observable) -> {
-            if (numberField.getText().equals("")) {
-                validateCheckBox.setSelected(false);
-                validateCheckBox.setText("Nie sprawdzono");
-            } else if (quickValidationEnabled.getValue()) this.validateNumber();
-        });
 
 
         // Ustawianie fokusa na pole wprowadzania numeru
@@ -90,13 +87,13 @@ public class MainController {
         // wybór odpowiedniego rodzaju numeru
         switch (selectedNumberName.getValue()) {
             case "PESEL":
-                number = new Pesel(numberField.getText());
+                number = new Pesel(numberText.get());
                 break;
             case "NIP":
-                number = new Nip(numberField.getText());
+                number = new Nip(numberText.get());
                 break;
             case "REGON":
-                number = new Regon(numberField.getText());
+                number = new Regon(numberText.get());
                 break;
         }
 
@@ -112,6 +109,43 @@ public class MainController {
             validateCheckBox.setText("NIE, niepoprawny");
             infoTextField.setText("");
         }
+    }
+
+    /**
+     * Dzięki tej metodzie możliwe jest wywołanie metody {@link #validateNumber()} za pomocą klawisza ENTER.
+     * Natomiast jeśli zostanie naciśnięty klawisz ESCAPE to zostanie wywołana metoda {@link #clearFields()}
+     *
+     * @param event umożliwia określenie który klawisz został naciśnięty
+     */
+    @FXML public void keyPressed(KeyEvent event) {
+        if (event.getCode() == KeyCode.ESCAPE) clearFields();
+        if (event.getCode() == KeyCode.ENTER) validateNumber();
+    }
+
+    /**
+     * Ta metoda pozwala zachować aktualny stan {@link #validateCheckBox} w przypdaku gdyby użytkownik w niego kliknął.
+     */
+    @FXML public void keepCheckBoxState() {
+        if (validateCheckBox.isSelected()) validateCheckBox.setSelected(false);
+        else validateCheckBox.setSelected(true);
+    }
+
+    /**
+     * Czyści wszystkie pola tekstowe i CheckBox.
+     */
+    @FXML public void clearFields() {
+        numberField.setText("");
+        validateCheckBox.setSelected(false);
+        validateCheckBox.setText("Nie sprawdzono");
+        infoTextField.setText("");
+        checksumTextField.setText("");
+    }
+
+    /**
+     * Kończy działanie programu.
+     */
+    @FXML public void exit() {
+        Platform.exit();
     }
 
     /**
@@ -139,65 +173,27 @@ public class MainController {
         }
     }
 
-    /**
-     * Dzięki tej metodzie możliwe jest wywołanie metody {@link #validateNumber()} za pomocą klawisza ENTER.
-     * Natomiast jeśli zostanie naciśnięty klawisz ESCAPE to zostanie wywołana metoda {@link #clear()}
-     *
-     * @param event umożliwia określenie który klawisz został naciśnięty
-     */
-    @FXML public void keyPressed(KeyEvent event) {
-        if (event.getCode() == KeyCode.ESCAPE) clear();
-        if (event.getCode() == KeyCode.ENTER) validateNumber();
-    }
-
-    /**
-     * Ta metoda pozwala zachować aktualny stan {@link #validateCheckBox} w przypdaku gdyby użytkownik w niego kliknął.
-     */
-    @FXML public void keepCheckBoxState() {
-        if (validateCheckBox.isSelected()) validateCheckBox.setSelected(false);
-        else validateCheckBox.setSelected(true);
-    }
-
-    /**
-     * Czyści wszystkie pola tekstowe i CheckBox.
-     */
-    @FXML public void clear() {
-        numberField.setText("");
-        validateCheckBox.setSelected(false);
-        validateCheckBox.setText("Nie sprawdzono");
-        infoTextField.setText("");
-        checksumTextField.setText("");
-    }
-
-    /**
-     * Kończy działanie programu.
-     */
-    @FXML public void exit() {
-        Platform.exit();
-    }
-
-    public String getSelectedNumberName() {
-        return selectedNumberName.getValue();
-    }
-
     public void setSelectedNumberName(String selectedNumberName) {
         numberListView.getSelectionModel().select(selectedNumberName);
     }
 
-    public String getNumberText() {
-        return numberField.getText();
+    public StringProperty selectedNumberNameProperty() {
+        return selectedNumberName;
     }
 
-    public void setNumberText(String numberText) {
-        this.numberField.setText(numberText);
+    public StringProperty numberTextProperty() {
+        return numberText;
     }
 
-    public boolean isQuickValidationEnabled() {
-        return quickValidationCheckItem.isSelected();
+    public BooleanProperty quickValidationEnabledProperty() {
+        return quickValidationEnabled;
     }
 
-    public void setQuickValidationEnabled(boolean enabled) {
-        quickValidationCheckItem.setSelected(enabled);
+    private void textOrSelectionChanged() {
+        if (numberText.getValue().equals("")) {
+            validateCheckBox.setSelected(false);
+            validateCheckBox.setText("Nie sprawdzono");
+        } else if (quickValidationEnabled.getValue()) this.validateNumber();
+        numberListView.getSelectionModel().select(selectedNumberName.getValue());
     }
-
 }

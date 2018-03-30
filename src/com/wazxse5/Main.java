@@ -17,18 +17,19 @@ public class Main extends Application {
         Application.launch(args);
     }
 
-
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // Załadowanie pliku fxml, czyli widoku okna
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/MainScreen.fxml"));
         Scene scene = new Scene(loader.load());
         MainController controller = loader.getController();
 
-        programSettings = new Settings();
-        programSettings.setMainController(controller);
-        programSettings.setPrimaryStage(primaryStage);
+        // Załadowanie ustawień programu
+        programSettings = new Settings(primaryStage, controller);
+        programSettings.load();
         programSettings.apply();
 
+        // Ustawienie i wyświetlenie okna programu
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(616.0);
         primaryStage.setMinHeight(464.0);
