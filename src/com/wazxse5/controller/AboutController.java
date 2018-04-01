@@ -1,10 +1,10 @@
-package com.wazxse5.fxml;
+package com.wazxse5.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-public class AboutProgramController {
+public class AboutController {
     private Stage aboutStage;
 
     @FXML private Label titleLabel;

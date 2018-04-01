@@ -1,6 +1,6 @@
 package com.wazxse5;
 
-import com.wazxse5.fxml.MainController;
+import com.wazxse5.controller.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 /**
  * Główna klasa programu.
  */
-public class Main extends Application {
+public class MainWindow extends Application {
     private Settings programSettings;
 
     public static void main(String[] args) {

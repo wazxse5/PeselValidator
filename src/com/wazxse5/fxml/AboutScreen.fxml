@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0"
       prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.wazxse5.fxml.AboutProgramController">
+      fx:controller="com.wazxse5.controller.AboutController">
     <children>
         <Label fx:id="titleLabel" layoutX="15.0" layoutY="15.0" prefHeight="30.0" prefWidth="120.0" text="O programie">
             <font>

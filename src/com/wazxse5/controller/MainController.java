@@ -1,5 +1,6 @@
-package com.wazxse5.fxml;
+package com.wazxse5.controller;
 
+import com.wazxse5.AboutWindow;
 import com.wazxse5.number.Nip;
 import com.wazxse5.number.Number;
 import com.wazxse5.number.Pesel;
@@ -13,15 +14,9 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-
-import java.io.IOException;
 
 /**
  * Klasa kontrolera FXML głównego okna programu.
@@ -42,6 +37,10 @@ public class MainController {
     @FXML private TextField checksumTextField;             // wyświetla informacje o obliczonej sumie kontrolnej
     @FXML private CheckMenuItem quickValidationCheckItem;  // ustawia czy ma być włączone szybkie sprawdzanie
 
+
+    /**
+     * Inicjalizuje wszystkie kontrolki, ich zawartość i listenery
+     */
     public void initialize() {
         // Utworzenie listy z dostępnymi numerami do wyboru
         ObservableList<String> numberNames = FXCollections.observableArrayList("PESEL", "NIP", "REGON");
@@ -78,6 +77,10 @@ public class MainController {
         Platform.runLater(() -> numberField.requestFocus());
     }
 
+/////////////////////////////////////////////////////////////
+//    Funkcje główne dotyczące bezpośredniej obsługi tego okna
+// ///////////////////////////////////////////////////////////
+
     /**
      * Sprawdza poprawność wprowadzonego numeru.
      * Tworzy odpowiedni obiekt numeru, a następnie wywołuje na nim metodę {@link Number#validate()}.
@@ -112,6 +115,17 @@ public class MainController {
     }
 
     /**
+     * Czyści wszystkie pola tekstowe i CheckBox.
+     */
+    @FXML public void clearFields() {
+        numberField.setText("");
+        validateCheckBox.setSelected(false);
+        validateCheckBox.setText("Nie sprawdzono");
+        infoTextField.setText("");
+        checksumTextField.setText("");
+    }
+
+    /**
      * Dzięki tej metodzie możliwe jest wywołanie metody {@link #validateNumber()} za pomocą klawisza ENTER.
      * Natomiast jeśli zostanie naciśnięty klawisz ESCAPE to zostanie wywołana metoda {@link #clearFields()}
      *
@@ -131,47 +145,29 @@ public class MainController {
     }
 
     /**
-     * Czyści wszystkie pola tekstowe i CheckBox.
+     * Funkkcja podpięta do listenera, odświeża kontrolki i ponownie waliduje numer.
      */
-    @FXML public void clearFields() {
-        numberField.setText("");
-        validateCheckBox.setSelected(false);
-        validateCheckBox.setText("Nie sprawdzono");
-        infoTextField.setText("");
-        checksumTextField.setText("");
+    private void textOrSelectionChanged() {
+        if (numberText.getValue().equals("")) {
+            validateCheckBox.setSelected(false);
+            validateCheckBox.setText("Nie sprawdzono");
+        } else if (quickValidationEnabled.getValue()) this.validateNumber();
+        numberListView.getSelectionModel().select(selectedNumberName.getValue());
     }
 
-    /**
-     * Kończy działanie programu.
-     */
-    @FXML public void exit() {
-        Platform.exit();
-    }
-
+/////////////////////////////////////////////////////////////
+//    Funkcje główne dotyczące wyświetlania innych okien
+/////////////////////////////////////////////////////////////
     /**
      * Wyświetla okienienko informacyjne z paska menu.
      */
     @FXML public void showAboutWindow() {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("AboutProgramScreen.fxml"));
-        try {
-            Scene scene = new Scene(loader.load());
-            Stage aboutStage = new Stage();
-
-            AboutProgramController aboutController = loader.getController();
-            aboutController.setAboutStage(aboutStage);
-
-            aboutStage.setTitle("O programie");
-            aboutStage.setResizable(false);
-            aboutStage.initOwner(numberField.getScene().getWindow());
-            aboutStage.initModality(Modality.APPLICATION_MODAL);
-
-            aboutStage.setScene(scene);
-            aboutStage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new AboutWindow(this.numberField.getScene().getWindow());
     }
+
+/////////////////////////////////////////////////////////////
+//   Gettery i settery propertiesów
+/////////////////////////////////////////////////////////////
 
     public void setSelectedNumberName(String selectedNumberName) {
         numberListView.getSelectionModel().select(selectedNumberName);
@@ -189,11 +185,7 @@ public class MainController {
         return quickValidationEnabled;
     }
 
-    private void textOrSelectionChanged() {
-        if (numberText.getValue().equals("")) {
-            validateCheckBox.setSelected(false);
-            validateCheckBox.setText("Nie sprawdzono");
-        } else if (quickValidationEnabled.getValue()) this.validateNumber();
-        numberListView.getSelectionModel().select(selectedNumberName.getValue());
+    @FXML public void exit() {
+        Platform.exit();
     }
 }

@@ -1,6 +1,6 @@
 package com.wazxse5;
 
-import com.wazxse5.fxml.MainController;
+import com.wazxse5.controller.MainController;
 import javafx.beans.property.*;
 import javafx.stage.Stage;
 
