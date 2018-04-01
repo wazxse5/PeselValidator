@@ -16,8 +16,6 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Opcje">
                     <items>
-                        <CheckMenuItem fx:id="quickValidationCheckItem" mnemonicParsing="false"
-                                       onAction="#validateNumber" text="Szybkie sprawdzanie"/>
                         <CheckMenuItem mnemonicParsing="false" text="Zapamiętaj stan programu"/>
                     </items>
                 </Menu>
@@ -65,7 +63,7 @@
                                     </font>
                                 </Button>
                                 <CheckBox fx:id="validateCheckBox" mnemonicParsing="false" onAction="#keepCheckBoxState"
-                                          prefHeight="40.0" prefWidth="150.0" text="Nie sprawdzono">
+                                          prefHeight="40.0" prefWidth="150.0" text="Nic nie wpisano">
                                     <font>
                                         <Font size="14.0"/>
                                     </font>

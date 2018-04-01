@@ -1,7 +1,10 @@
 package com.wazxse5.settings;
 
 import com.wazxse5.controller.MainController;
-import javafx.beans.property.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -25,7 +28,6 @@ public class MainSettings {
     private DoubleProperty stageHeight;
     private StringProperty numberText;
     private StringProperty selectedNumberName;
-    private BooleanProperty quickValidationEnabled;
 
     public MainSettings(Stage primaryStage, MainController mainController) {
         this.primaryStage = primaryStage;
@@ -38,7 +40,6 @@ public class MainSettings {
         stageHeight = new SimpleDoubleProperty();
         numberText = new SimpleStringProperty();
         selectedNumberName = new SimpleStringProperty();
-        quickValidationEnabled = new SimpleBooleanProperty();
 
         // Zbindowanie do odpowienich property w primaryStage i mainController
         // tam gdzie się da, to używam Bidirectional
@@ -48,7 +49,6 @@ public class MainSettings {
         stageHeight.bind(primaryStage.heightProperty());
         numberText.bindBidirectional(mainController.numberTextProperty());
         selectedNumberName.bind(mainController.selectedNumberNameProperty());
-        quickValidationEnabled.bindBidirectional(mainController.quickValidationEnabledProperty());
 
         // Utworzenie ustawień i załadowanie domyślnych wartości
         settings = new Properties();
@@ -58,7 +58,6 @@ public class MainSettings {
         settings.put("stageHeight", "464.0");
         settings.put("numberText", "");
         settings.put("selectedNumberName", "PESEL");
-        settings.put("quickValidationEnabled", "true");
     }
 
     public void load() {
@@ -88,7 +87,6 @@ public class MainSettings {
         numberText.set(settings.getProperty("numberText"));
         // musi być tak bo property z ListView jest tylko do odczytu
         mainController.setSelectedNumberName(settings.getProperty("selectedNumberName"));
-        quickValidationEnabled.set(Boolean.parseBoolean(settings.getProperty("quickValidationEnabled")));
     }
 
     public void save() {
@@ -99,7 +97,6 @@ public class MainSettings {
         settings.put("stageHeight", Double.toString(stageHeight.get()));
         settings.put("numberText", numberText.get());
         settings.put("selectedNumberName", selectedNumberName.get());
-        settings.put("quickValidationEnabled", Boolean.toString(quickValidationEnabled.get()));
 
         // Próba zapisu
         try {

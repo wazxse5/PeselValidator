@@ -7,14 +7,15 @@ import com.wazxse5.number.Pesel;
 import com.wazxse5.number.Regon;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -27,7 +28,6 @@ public class MainController {
     private Number number;
     private StringProperty numberText;                     // tekst z pola tekstowego do wprowadzania numeru
     private StringProperty selectedNumberName;             // nazwa zaznaczonego numeru (PESEL, NIP itd.)
-    private BooleanProperty quickValidationEnabled;        // czy jest włączone szybkie sprawdzanie
 
     @FXML private ListView<String> numberListView;         // służy do wyboru numeru do walidacji
     @FXML private Label numberFieldLabel;                  // podpis pola tekstowego do wprowadzania numeru
@@ -35,7 +35,6 @@ public class MainController {
     @FXML private CheckBox validateCheckBox;               // informuje o poprawności numeru po walidacji
     @FXML private TextField infoTextField;                 // wyświetla dodatkowe info możliwe do uzyskania z numeru
     @FXML private TextField checksumTextField;             // wyświetla informacje o obliczonej sumie kontrolnej
-    @FXML private CheckMenuItem quickValidationCheckItem;  // ustawia czy ma być włączone szybkie sprawdzanie
 
 
     /**
@@ -65,12 +64,6 @@ public class MainController {
         numberFieldLabel.textProperty().bind(Bindings.concat("Wprowadź numer ", selectedNumberName, ":"));
         // Ustawienie listenera na zmianę numeru
         selectedNumberName.addListener(observable -> textOrSelectionChanged());
-
-
-        // Property które zapamiętuje czy jest włączone szybkie sprawdzanie
-        quickValidationEnabled = new SimpleBooleanProperty();
-        // Zbindowanie do CheckMenuItema
-        quickValidationEnabled.bindBidirectional(quickValidationCheckItem.selectedProperty());
 
 
         // Ustawianie fokusa na pole wprowadzania numeru
@@ -150,14 +143,15 @@ public class MainController {
     private void textOrSelectionChanged() {
         if (numberText.getValue().equals("")) {
             validateCheckBox.setSelected(false);
-            validateCheckBox.setText("Nie sprawdzono");
-        } else if (quickValidationEnabled.getValue()) this.validateNumber();
+            validateCheckBox.setText("Nic nie wpisano");
+        } else this.validateNumber();
         numberListView.getSelectionModel().select(selectedNumberName.getValue());
     }
 
 /////////////////////////////////////////////////////////////
 //    Funkcje główne dotyczące wyświetlania innych okien
 /////////////////////////////////////////////////////////////
+
     /**
      * Wyświetla okienienko informacyjne z paska menu.
      */
@@ -179,10 +173,6 @@ public class MainController {
 
     public StringProperty numberTextProperty() {
         return numberText;
-    }
-
-    public BooleanProperty quickValidationEnabledProperty() {
-        return quickValidationEnabled;
     }
 
     @FXML public void exit() {
