@@ -1,4 +1,4 @@
-package com.wazxse5;
+package com.wazxse5.settings;
 
 import com.wazxse5.controller.MainController;
 import javafx.beans.property.*;
@@ -12,7 +12,7 @@ import java.util.Properties;
 /**
  * Klasa odpowiada za ładowanie, zapisywanie i zarządzanie wszystkimi opcjami i ustawieniami jakie można zapisać w programie
  */
-public class Settings {
+public class MainSettings {
     private Stage primaryStage;
     private MainController mainController;
 
@@ -27,7 +27,7 @@ public class Settings {
     private StringProperty selectedNumberName;
     private BooleanProperty quickValidationEnabled;
 
-    public Settings(Stage primaryStage, MainController mainController) {
+    public MainSettings(Stage primaryStage, MainController mainController) {
         this.primaryStage = primaryStage;
         this.mainController = mainController;
 

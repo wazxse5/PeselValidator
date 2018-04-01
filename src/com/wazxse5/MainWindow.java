@@ -1,6 +1,7 @@
 package com.wazxse5;
 
 import com.wazxse5.controller.MainController;
+import com.wazxse5.settings.MainSettings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,7 +12,7 @@ import javafx.stage.Stage;
  * Główna klasa programu.
  */
 public class MainWindow extends Application {
-    private Settings programSettings;
+    private MainSettings mainSettings;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -25,9 +26,9 @@ public class MainWindow extends Application {
         MainController controller = loader.getController();
 
         // Załadowanie ustawień programu
-        programSettings = new Settings(primaryStage, controller);
-        programSettings.load();
-        programSettings.apply();
+        mainSettings = new MainSettings(primaryStage, controller);
+        mainSettings.load();
+        mainSettings.apply();
 
         // Ustawienie i wyświetlenie okna programu
         primaryStage.setScene(scene);
@@ -40,6 +41,6 @@ public class MainWindow extends Application {
 
     @Override
     public void stop() {
-        programSettings.save();
+        mainSettings.save();
     }
 }
