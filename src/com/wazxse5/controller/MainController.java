@@ -1,10 +1,8 @@
 package com.wazxse5.controller;
 
 import com.wazxse5.AboutWindow;
-import com.wazxse5.number.Nip;
+import com.wazxse5.number.*;
 import com.wazxse5.number.Number;
-import com.wazxse5.number.Pesel;
-import com.wazxse5.number.Regon;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
@@ -42,7 +40,7 @@ public class MainController {
      */
     public void initialize() {
         // Utworzenie listy z dostępnymi numerami do wyboru
-        ObservableList<String> numberNames = FXCollections.observableArrayList("PESEL", "NIP", "REGON");
+        ObservableList<String> numberNames = FXCollections.observableArrayList("PESEL", "NIP", "REGON", "IBAN");
         // Załadowanie listy numerów do ListView
         numberListView.setItems(numberNames);
         // ustawienie zaznaczenia PESEL na liście
@@ -90,6 +88,9 @@ public class MainController {
                 break;
             case "REGON":
                 number = new Regon(numberText.get());
+                break;
+            case "IBAN":
+                number = new Iban(numberText.get());
                 break;
         }
 
@@ -141,6 +142,7 @@ public class MainController {
      * Funkkcja podpięta do listenera, odświeża kontrolki i ponownie waliduje numer.
      */
     private void textOrSelectionChanged() {
+        numberField.setText(numberText.get().toUpperCase());
         if (numberText.getValue().equals("")) {
             validateCheckBox.setSelected(false);
             validateCheckBox.setText("Nic nie wpisano");
