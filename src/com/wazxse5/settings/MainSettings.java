@@ -3,8 +3,6 @@ package com.wazxse5.settings;
 import com.wazxse5.controller.MainController;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -26,8 +24,7 @@ public class MainSettings {
     private DoubleProperty stageY;
     private DoubleProperty stageWidth;
     private DoubleProperty stageHeight;
-    private StringProperty numberText;
-    private StringProperty selectedNumberName;
+
 
     public MainSettings(Stage primaryStage, MainController mainController) {
         this.primaryStage = primaryStage;
@@ -38,8 +35,7 @@ public class MainSettings {
         stageY = new SimpleDoubleProperty();
         stageWidth = new SimpleDoubleProperty();
         stageHeight = new SimpleDoubleProperty();
-        numberText = new SimpleStringProperty();
-        selectedNumberName = new SimpleStringProperty();
+
 
         // Zbindowanie do odpowienich property w primaryStage i mainController
         // tam gdzie się da, to używam Bidirectional
@@ -47,8 +43,7 @@ public class MainSettings {
         stageY.bind(primaryStage.yProperty());
         stageWidth.bind(primaryStage.widthProperty());
         stageHeight.bind(primaryStage.heightProperty());
-        numberText.bindBidirectional(mainController.numberTextProperty());
-        selectedNumberName.bind(mainController.selectedNumberNameProperty());
+
 
         // Utworzenie ustawień i załadowanie domyślnych wartości
         settings = new Properties();
@@ -84,8 +79,7 @@ public class MainSettings {
         primaryStage.setWidth(Double.parseDouble(settings.getProperty("stageWidth")));
         primaryStage.setHeight(Double.parseDouble(settings.getProperty("stageHeight")));
 
-        numberText.set(settings.getProperty("numberText"));
-        // musi być tak bo property z ListView jest tylko do odczytu
+        mainController.setNumberText(settings.getProperty("numberText"));
         mainController.setSelectedNumberName(settings.getProperty("selectedNumberName"));
     }
 
@@ -95,8 +89,8 @@ public class MainSettings {
         settings.put("stageY", Double.toString(stageY.get()));
         settings.put("stageWidth", Double.toString(stageWidth.get()));
         settings.put("stageHeight", Double.toString(stageHeight.get()));
-        settings.put("numberText", numberText.get());
-        settings.put("selectedNumberName", selectedNumberName.get());
+        settings.put("numberText", mainController.getNumberText());
+        settings.put("selectedNumberName", mainController.getSelectedNumberName());
 
         // Próba zapisu
         try {

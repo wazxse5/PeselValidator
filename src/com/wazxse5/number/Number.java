@@ -17,9 +17,11 @@ public abstract class Number {
      */
     public Number(String number) {
         number = number.trim();
+        number = number.replaceAll("\\s+", "");
+        number = number.toUpperCase();
         StringBuilder builder = new StringBuilder();
         for (char c : number.toCharArray()) {
-            if (Character.isDigit(c)) builder.append(c);
+            if (Character.isLetterOrDigit(c)) builder.append(c);
         }
         this.number = builder.toString();
         this.validated = false;
