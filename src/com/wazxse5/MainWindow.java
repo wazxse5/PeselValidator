@@ -25,6 +25,11 @@ public class MainWindow extends Application {
         Scene scene = new Scene(loader.load());
         MainController controller = loader.getController();
 
+        // Załadowanie ustawień programu
+        mainSettings = new MainSettings(primaryStage, controller);
+        mainSettings.load();
+        mainSettings.apply();
+
         // Ustawienie i wyświetlenie okna programu
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(616.0);
@@ -32,11 +37,6 @@ public class MainWindow extends Application {
         primaryStage.setTitle("Pesel Validator");
         primaryStage.getIcons().add(new Image(Thread.currentThread().getContextClassLoader().getResourceAsStream("icon.png")));
         primaryStage.show();
-
-        // Załadowanie ustawień programu
-        mainSettings = new MainSettings(primaryStage, controller);
-        mainSettings.load();
-        mainSettings.apply();
     }
 
     @Override
