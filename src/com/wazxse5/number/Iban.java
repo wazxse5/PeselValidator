@@ -52,4 +52,19 @@ public class Iban extends Number {
     @Override public String getAdditionalInfo() {
         return null;
     }
+
+    public static String formatIban(String ibanText) {
+        ibanText = ibanText.trim();
+        ibanText = ibanText.replaceAll("\\s", "");
+        ibanText = ibanText.toUpperCase();
+
+        StringBuilder formattedIban = new StringBuilder();
+        for (int i = 0; i < ibanText.length(); i += 4) {
+            if (i + 4 < ibanText.length()) {
+                formattedIban.append(ibanText.substring(i, i + 4));
+                formattedIban.append(" ");
+            } else formattedIban.append(ibanText.substring(i));
+        }
+        return formattedIban.toString().trim();
+    }
 }
