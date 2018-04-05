@@ -192,12 +192,14 @@ public class MainController {
                 validateCheckBox.setText("Nic nie wpisano");
             } else mainController.validateNumber();
 
-            if (selectedNumberName.get().equals("IBAN")) {
-                Platform.runLater(() -> {
+            Platform.runLater(() -> {
+                if (selectedNumberName.get().equals("IBAN")) {
                     numberField.setText(Iban.formatIban(numberField.getText()));
-                    numberField.end();
-                });
-            }
+                } else {
+                    numberField.setText(numberField.getText().replaceAll("\\s", ""));
+                }
+                numberField.end();
+            });
         }
     }
 }
