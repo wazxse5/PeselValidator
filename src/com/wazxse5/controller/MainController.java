@@ -7,6 +7,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -24,7 +26,6 @@ import javafx.scene.input.KeyEvent;
  */
 public class MainController {
     private Number number;
-    private StringProperty numberText;                     // tekst z pola tekstowego do wprowadzania numeru
     private StringProperty selectedNumberName;             // nazwa zaznaczonego numeru (PESEL, NIP itd.)
 
     @FXML private ListView<String> numberListView;         // służy do wyboru numeru do walidacji
@@ -47,24 +48,23 @@ public class MainController {
         numberListView.getSelectionModel().select("PESEL");
 
 
-        // Property które zapamiętuje aktualnie wprowadzony numer
-        numberText = new SimpleStringProperty();
-        numberText.bindBidirectional(numberField.textProperty());
+        // Utworzenie głównego listenera
+        MyListener listener = new MyListener(this);
+
+
         // Dodanie listenera na zmianę wprowadzonego numeru
-        numberText.addListener(observable1 -> textOrSelectionChanged());
+        numberField.textProperty().addListener(listener);
 
 
-        // Property które zapamiętuje zaznaczony aktualnie numer
         selectedNumberName = new SimpleStringProperty();
         // Zbindowanie do aktualnie zaznaczonego numeru w ListView
         selectedNumberName.bind(numberListView.getSelectionModel().selectedItemProperty());
         // Zbindowanie zaznaczonego numeru do Labala który zachęca do wprowadzenia numeru
         numberFieldLabel.textProperty().bind(Bindings.concat("Wprowadź numer ", selectedNumberName, ":"));
         // Ustawienie listenera na zmianę numeru
-        selectedNumberName.addListener(observable -> textOrSelectionChanged());
+        numberListView.getSelectionModel().selectedItemProperty().addListener(listener);
 
 
-        // Ustawianie fokusa na pole wprowadzania numeru
         Platform.runLater(() -> numberField.requestFocus());
     }
 
@@ -81,16 +81,16 @@ public class MainController {
         // wybór odpowiedniego rodzaju numeru
         switch (selectedNumberName.getValue()) {
             case "PESEL":
-                number = new Pesel(numberText.get());
+                number = new Pesel(numberField.getText());
                 break;
             case "NIP":
-                number = new Nip(numberText.get());
+                number = new Nip(numberField.getText());
                 break;
             case "REGON":
-                number = new Regon(numberText.get());
+                number = new Regon(numberField.getText());
                 break;
             case "IBAN":
-                number = new Iban(numberText.get());
+                number = new Iban(numberField.getText());
                 break;
         }
 
@@ -138,18 +138,6 @@ public class MainController {
         else validateCheckBox.setSelected(true);
     }
 
-    /**
-     * Funkkcja podpięta do listenera, odświeża kontrolki i ponownie waliduje numer.
-     */
-    private void textOrSelectionChanged() {
-        numberField.setText(numberText.get().toUpperCase());
-        if (numberText.getValue().equals("")) {
-            validateCheckBox.setSelected(false);
-            validateCheckBox.setText("Nic nie wpisano");
-        } else this.validateNumber();
-        numberListView.getSelectionModel().select(selectedNumberName.getValue());
-    }
-
 /////////////////////////////////////////////////////////////
 //    Funkcje główne dotyczące wyświetlania innych okien
 /////////////////////////////////////////////////////////////
@@ -169,15 +157,48 @@ public class MainController {
         numberListView.getSelectionModel().select(selectedNumberName);
     }
 
-    public StringProperty selectedNumberNameProperty() {
-        return selectedNumberName;
+    public String getSelectedNumberName() {
+        return selectedNumberName.getValue();
     }
 
-    public StringProperty numberTextProperty() {
-        return numberText;
+
+    public void setNumberText(String numberText) {
+        numberField.setText(numberText);
     }
+
+    public String getNumberText() {
+        return numberField.getText();
+    }
+
 
     @FXML public void exit() {
         Platform.exit();
     }
+
+
+    /**
+     * Klasa ma udostępniać lister który reafuje na zmiane wprowadzonego numeru lub typu numeru
+     */
+    class MyListener implements ChangeListener<String> {
+        private MainController mainController;
+
+        MyListener(MainController mainController) {
+            this.mainController = mainController;
+        }
+
+        @Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            if (numberField.getText().equals("")) {
+                validateCheckBox.setSelected(false);
+                validateCheckBox.setText("Nic nie wpisano");
+            } else mainController.validateNumber();
+
+            if (selectedNumberName.get().equals("IBAN")) {
+                Platform.runLater(() -> {
+                    numberField.setText(Iban.formatIban(numberField.getText()));
+                    numberField.end();
+                });
+            }
+        }
+    }
 }
+
