@@ -49,8 +49,8 @@ public class MainSettings {
         settings = new Properties();
         settings.put("stageX", "400.0");
         settings.put("stageY", "200.0");
-        settings.put("stageWidth", "616.0");
-        settings.put("stageHeight", "464.0");
+        settings.put("stageWidth", "630.0");
+        settings.put("stageHeight", "470.0");
         settings.put("numberText", "");
         settings.put("selectedNumberName", "PESEL");
     }

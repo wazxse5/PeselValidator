@@ -26,14 +26,14 @@ import javafx.scene.input.KeyEvent;
  */
 public class MainController {
     private Number number;
-    private StringProperty selectedNumberName;             // nazwa zaznaczonego numeru (PESEL, NIP itd.)
+    private StringProperty selectedNumberName;       // nazwa zaznaczonego numeru (PESEL, NIP itd.)
 
-    @FXML private ListView<String> numberListView;         // służy do wyboru numeru do walidacji
-    @FXML private Label numberFieldLabel;                  // podpis pola tekstowego do wprowadzania numeru
-    @FXML private TextField numberField;                   // pole tekstowe do wprowadzania numeru
-    @FXML private CheckBox validateCheckBox;               // informuje o poprawności numeru po walidacji
-    @FXML private TextField infoTextField;                 // wyświetla dodatkowe info możliwe do uzyskania z numeru
-    @FXML private TextField checksumTextField;             // wyświetla informacje o obliczonej sumie kontrolnej
+    @FXML private ListView<String> numberListView;   // służy do wyboru numeru do walidacji
+    @FXML private Label numberTitleLab;            // podpis pola tekstowego do wprowadzania numeru
+    @FXML private TextField numberTF;                // pole tekstowe do wprowadzania numeru
+    @FXML private CheckBox resultCB;                 // informuje o poprawności numeru po walidacji
+    @FXML private Label resultInfoLab;               // wyświetla dodatkowe info możliwe do uzyskania z numeru
+    @FXML private Label resultChecksumLab;           // wyświetla informacje o obliczonej sumie kontrolnej
 
 
     /**
@@ -53,19 +53,18 @@ public class MainController {
 
 
         // Dodanie listenera na zmianę wprowadzonego numeru
-        numberField.textProperty().addListener(listener);
+        numberTF.textProperty().addListener(listener);
 
 
         selectedNumberName = new SimpleStringProperty();
         // Zbindowanie do aktualnie zaznaczonego numeru w ListView
         selectedNumberName.bind(numberListView.getSelectionModel().selectedItemProperty());
         // Zbindowanie zaznaczonego numeru do Labala który zachęca do wprowadzenia numeru
-        numberFieldLabel.textProperty().bind(Bindings.concat("Wprowadź numer ", selectedNumberName, ":"));
+        numberTitleLab.textProperty().bind(Bindings.concat("Wprowadź numer ", selectedNumberName, ":"));
         // Ustawienie listenera na zmianę numeru
         numberListView.getSelectionModel().selectedItemProperty().addListener(listener);
 
-
-        Platform.runLater(() -> numberField.requestFocus());
+        Platform.runLater(() -> numberTF.requestFocus());
     }
 
 /////////////////////////////////////////////////////////////
@@ -77,20 +76,20 @@ public class MainController {
      * Tworzy odpowiedni obiekt numeru, a następnie wywołuje na nim metodę {@link Number#validate()}.
      * Jeśli numer jest poprawny to pobiera i wyświetla odpowiednie informacje.
      */
-    @FXML public void validateNumber() {
+    private void validateNumber() {
         // wybór odpowiedniego rodzaju numeru
         switch (selectedNumberName.getValue()) {
             case "PESEL":
-                number = new Pesel(numberField.getText());
+                number = new Pesel(numberTF.getText());
                 break;
             case "NIP":
-                number = new Nip(numberField.getText());
+                number = new Nip(numberTF.getText());
                 break;
             case "REGON":
-                number = new Regon(numberField.getText());
+                number = new Regon(numberTF.getText());
                 break;
             case "IBAN":
-                number = new Iban(numberField.getText());
+                number = new Iban(numberTF.getText());
                 break;
         }
 
@@ -98,13 +97,13 @@ public class MainController {
 
         // ustawienie pól na odpowiednie wartości
         if (number.isCorrect()) {
-            validateCheckBox.setSelected(true);
-            validateCheckBox.setText("TAK, poprawny");
-            infoTextField.setText(number.getAdditionalInfo());
+            resultCB.setSelected(true);
+            resultCB.setText("TAK, poprawny");
+            resultInfoLab.setText(number.getAdditionalInfo());
         } else {
-            validateCheckBox.setSelected(false);
-            validateCheckBox.setText("NIE, niepoprawny");
-            infoTextField.setText("");
+            resultCB.setSelected(false);
+            resultCB.setText("NIE, niepoprawny");
+            resultInfoLab.setText("");
         }
     }
 
@@ -112,11 +111,11 @@ public class MainController {
      * Czyści wszystkie pola tekstowe i CheckBox.
      */
     @FXML public void clearFields() {
-        numberField.setText("");
-        validateCheckBox.setSelected(false);
-        validateCheckBox.setText("Nie sprawdzono");
-        infoTextField.setText("");
-        checksumTextField.setText("");
+        numberTF.setText("");
+        resultCB.setSelected(false);
+        resultCB.setText("Nie sprawdzono");
+        resultInfoLab.setText("");
+        resultChecksumLab.setText("");
     }
 
     /**
@@ -131,12 +130,12 @@ public class MainController {
     }
 
     /**
-     * Ta metoda pozwala zachować aktualny stan {@link #validateCheckBox} w przypdaku gdyby użytkownik w niego kliknął.
+     * Ta metoda pozwala zachować aktualny stan {@link #resultCB} w przypdaku gdyby użytkownik w niego kliknął.
      */
-    @FXML public void keepCheckBoxState() {
-        if (validateCheckBox.isSelected()) validateCheckBox.setSelected(false);
-        else validateCheckBox.setSelected(true);
+    @FXML public void keepResultCB() {
+        resultCB.setSelected(!resultCB.isSelected());
     }
+
 
 /////////////////////////////////////////////////////////////
 //    Funkcje główne dotyczące wyświetlania innych okien
@@ -146,7 +145,7 @@ public class MainController {
      * Wyświetla okienienko informacyjne z paska menu.
      */
     @FXML public void showAboutWindow() {
-        new AboutWindow(this.numberField.getScene().getWindow());
+        new AboutWindow(this.numberTF.getScene().getWindow());
     }
 
 /////////////////////////////////////////////////////////////
@@ -163,11 +162,11 @@ public class MainController {
 
 
     public void setNumberText(String numberText) {
-        numberField.setText(numberText);
+        numberTF.setText(numberText);
     }
 
     public String getNumberText() {
-        return numberField.getText();
+        return numberTF.getText();
     }
 
 
@@ -187,18 +186,18 @@ public class MainController {
         }
 
         @Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            if (numberField.getText().equals("")) {
-                validateCheckBox.setSelected(false);
-                validateCheckBox.setText("Nic nie wpisano");
+            if (numberTF.getText().equals("")) {
+                resultCB.setSelected(false);
+                resultCB.setText("Nic nie wpisano");
             } else mainController.validateNumber();
 
             Platform.runLater(() -> {
                 if (selectedNumberName.get().equals("IBAN")) {
-                    numberField.setText(Iban.formatIban(numberField.getText()));
+                    numberTF.setText(Iban.formatIban(numberTF.getText()));
                 } else {
-                    numberField.setText(numberField.getText().replaceAll("\\s", ""));
+                    numberTF.setText(numberTF.getText().replaceAll("\\s", ""));
                 }
-                numberField.end();
+                numberTF.end();
             });
         }
     }

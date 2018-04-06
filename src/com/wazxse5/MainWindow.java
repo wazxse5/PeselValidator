@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+
 /**
  * Główna klasa programu.
  */
@@ -32,8 +33,8 @@ public class MainWindow extends Application {
 
         // Ustawienie i wyświetlenie okna programu
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(616.0);
-        primaryStage.setMinHeight(464.0);
+        primaryStage.setMinWidth(630.0);
+        primaryStage.setMinHeight(470.0);
         primaryStage.setTitle("Pesel Validator");
         primaryStage.getIcons().add(new Image(Thread.currentThread().getContextClassLoader().getResourceAsStream("icon.png")));
         primaryStage.show();
