@@ -1,7 +1,9 @@
 package com.wazxse5.settings;
 
 import com.wazxse5.controller.MainController;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.stage.Stage;
 
@@ -24,6 +26,7 @@ public class MainSettings {
     private DoubleProperty stageY;
     private DoubleProperty stageWidth;
     private DoubleProperty stageHeight;
+    private BooleanProperty stageMaximized;
 
 
     public MainSettings(Stage primaryStage, MainController mainController) {
@@ -35,14 +38,15 @@ public class MainSettings {
         stageY = new SimpleDoubleProperty();
         stageWidth = new SimpleDoubleProperty();
         stageHeight = new SimpleDoubleProperty();
+        stageMaximized = new SimpleBooleanProperty();
 
 
-        // Zbindowanie do odpowienich property w primaryStage i mainController
-        // tam gdzie się da, to używam Bidirectional
+        // Zbindowanie do odpowienich property w primaryStage
         stageX.bind(primaryStage.xProperty());
         stageY.bind(primaryStage.yProperty());
         stageWidth.bind(primaryStage.widthProperty());
         stageHeight.bind(primaryStage.heightProperty());
+        stageMaximized.bind(primaryStage.maximizedProperty());
 
 
         // Utworzenie ustawień i załadowanie domyślnych wartości
@@ -51,6 +55,7 @@ public class MainSettings {
         settings.put("stageY", "200.0");
         settings.put("stageWidth", "630.0");
         settings.put("stageHeight", "470.0");
+        settings.put("stageMaximized", "false");
         settings.put("numberText", "");
         settings.put("selectedNumberName", "PESEL");
     }
@@ -78,6 +83,7 @@ public class MainSettings {
         primaryStage.setY(Double.parseDouble(settings.getProperty("stageY")));
         primaryStage.setWidth(Double.parseDouble(settings.getProperty("stageWidth")));
         primaryStage.setHeight(Double.parseDouble(settings.getProperty("stageHeight")));
+        primaryStage.setMaximized(Boolean.parseBoolean(settings.getProperty("stageMaximized")));
 
         mainController.setNumberText(settings.getProperty("numberText"));
         mainController.setSelectedNumberName(settings.getProperty("selectedNumberName"));
@@ -89,6 +95,7 @@ public class MainSettings {
         settings.put("stageY", Double.toString(stageY.get()));
         settings.put("stageWidth", Double.toString(stageWidth.get()));
         settings.put("stageHeight", Double.toString(stageHeight.get()));
+        settings.put("stageMaximized", Boolean.toString(stageMaximized.get()));
         settings.put("numberText", mainController.getNumberText());
         settings.put("selectedNumberName", mainController.getSelectedNumberName());
 
