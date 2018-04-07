@@ -4,9 +4,11 @@ import com.wazxse5.controller.MainController;
 import com.wazxse5.settings.MainSettings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
 
 /**
  * Główna klasa programu.
@@ -22,8 +24,10 @@ public class MainWindow extends Application {
     public void start(Stage primaryStage) throws Exception {
         // Załadowanie pliku fxml, czyli widoku okna
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/MainScreen.fxml"));
-        Scene scene = new Scene(loader.load());
+        Parent parent = loader.load();
+        Scene scene = new Scene(parent);
         MainController controller = loader.getController();
+        parent.getStylesheets().add(this.getClass().getResource("fxml/mainStyle.css").toExternalForm());
 
         // Załadowanie ustawień programu
         mainSettings = new MainSettings(primaryStage, controller);
@@ -32,8 +36,8 @@ public class MainWindow extends Application {
 
         // Ustawienie i wyświetlenie okna programu
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(616.0);
-        primaryStage.setMinHeight(464.0);
+        primaryStage.setMinWidth(630.0);
+        primaryStage.setMinHeight(470.0);
         primaryStage.setTitle("Pesel Validator");
         primaryStage.getIcons().add(new Image(Thread.currentThread().getContextClassLoader().getResourceAsStream("icon.png")));
         primaryStage.show();
