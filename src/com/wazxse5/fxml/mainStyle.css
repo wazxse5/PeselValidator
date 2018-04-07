@@ -1,0 +1,9 @@
+.outputLabel {
+    -fx-background-color: white;
+    -fx-border-color: lightgray;
+    -fx-font-size: 14;
+}
+
+.border {
+    -fx-border-color: lightgray;
+}

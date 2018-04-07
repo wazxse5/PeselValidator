@@ -68,13 +68,14 @@ public class MainSettings {
         if (!settingsDir.exists()) settingsDir.mkdir();
         // Próba otwarcia pliku ustawień
         settingsFile = new File(settingsDir, "settings.piwo");
-        try {
-            FileInputStream input = new FileInputStream(settingsFile);
-            settings.load(input);
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-            System.err.println("Nie udało się wczytać pliku ustawień");
+        if (settingsFile.exists()) {
+            try {
+                FileInputStream input = new FileInputStream(settingsFile);
+                settings.load(input);
+            } catch (java.io.IOException ignored) {
+            }
         }
+
     }
 
     public void apply() {
