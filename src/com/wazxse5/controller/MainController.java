@@ -159,8 +159,7 @@ public class MainController {
     public String getSelectedNumberName() {
         return selectedNumberName.getValue();
     }
-
-
+    
     public void setNumberText(String numberText) {
         numberTF.setText(numberText);
     }
@@ -168,7 +167,6 @@ public class MainController {
     public String getNumberText() {
         return numberTF.getText();
     }
-
 
     @FXML public void exit() {
         Platform.exit();

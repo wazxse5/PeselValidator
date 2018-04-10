@@ -33,54 +33,46 @@ public class Pesel extends Number {
      */
     @Override
     public void validate() {
-        boolean peselGood = true;
         int[] tab = new int[11];
         int checksum = 0;
-        int birthDay, birthMonth, birthYear;
 
-        if (super.getNumber() == null) peselGood = false;
-        if (super.getNumber().length() != 11) peselGood = false;
-
-        if (peselGood) {
+        if (isGood()) {
+            // Wczytanie numeru jako tablica int
             for (int i = 0; i < 11; i++) {
                 tab[i] = Character.getNumericValue(super.getNumber().charAt(i));
             }
 
+            // Sprawdzenie warunków poprawności numeru
             for (int i = 0; i < 10; i++) checksum += (tab[i] * weightTable[i]);
             checksum = checksum % 10;
             super.setCorrect(checksum == tab[10]);
 
-            birthDay = 10 * tab[4] + tab[5];
-            birthYear = 10 * tab[0] + tab[1];
-            birthMonth = 10 * tab[2] + tab[3];
-            if (birthDay > 31) super.setCorrect(false);
-
-            if (birthMonth <= 12) birthYear += 1900;
-            else if (birthMonth <= 32) {
-                birthYear += 2000;
-                birthMonth -= 20;
-            } else if (birthMonth <= 52) {
-                birthYear += 2100;
-                birthMonth -= 40;
-            } else if (birthMonth <= 72) {
-                birthYear += 2200;
-                birthMonth -= 60;
-            } else if (birthMonth <= 92) {
-                birthYear += 1800;
-                birthMonth -= 80;
-            } else super.setCorrect(false);
-
-            try {   // przydatne np. w przypadku zamiany dni z rokiem czego algorytm może nie wyłapać
-                this.birthDate = LocalDate.of(birthYear, birthMonth, birthDay);
+            // Wczytanie daty urodzenia i płci
+            // To jest w try bo w przypadku zamiany dni z rokiem czego algorytm może nie wyłapać LocalDate rzuci wyjątek
+            try {
+                this.birthDate = calculateBirthDate();
                 this.age = LocalDate.now().getYear() - this.birthDate.getYear();
-                if (tab[9] % 2 == 0) this.sex = Sex.FEMALE;
-                if (tab[9] % 2 == 1) this.sex = Sex.MALE;
             } catch (DateTimeException e) {
                 super.setCorrect(false);
             }
-        }
 
+            // Wczytanie płci
+            if (tab[9] % 2 == 0) this.sex = Sex.FEMALE;
+            if (tab[9] % 2 == 1) this.sex = Sex.MALE;
+        }
         super.setValidated();
+    }
+
+    /**
+     * Sprawdza czy numer ma poprawną strukturę: długość, odpowiednie znaki itp
+     *
+     * @return true jeśli ma poprawną strukturę
+     */
+    @Override public boolean isGood() {
+        boolean peselGood = true;
+        if (super.getNumber() == null) peselGood = false;
+        if (super.getNumber().length() != 11) peselGood = false;
+        return peselGood;
     }
 
     /**
@@ -99,6 +91,38 @@ public class Pesel extends Number {
             return infoBuilder.toString();
         } else return "";
     }
+
+
+    private LocalDate calculateBirthDate() throws DateTimeException {
+        int[] numberAsIntArray = new int[11];
+        for (int i = 0; i < 11; i++) {
+            numberAsIntArray[i] = Character.getNumericValue(super.getNumber().charAt(i));
+        }
+
+        int birthDay = 10 * numberAsIntArray[4] + numberAsIntArray[5];
+        int birthYear = 10 * numberAsIntArray[0] + numberAsIntArray[1];
+        int birthMonth = 10 * numberAsIntArray[2] + numberAsIntArray[3];
+        if (birthDay > 31) super.setCorrect(false);
+
+        if (birthMonth <= 12) birthYear += 1900;
+        else if (birthMonth <= 32) {
+            birthYear += 2000;
+            birthMonth -= 20;
+        } else if (birthMonth <= 52) {
+            birthYear += 2100;
+            birthMonth -= 40;
+        } else if (birthMonth <= 72) {
+            birthYear += 2200;
+            birthMonth -= 60;
+        } else if (birthMonth <= 92) {
+            birthYear += 1800;
+            birthMonth -= 80;
+        } else super.setCorrect(false);
+
+        return LocalDate.of(birthYear, birthMonth, birthDay);
+    }
+
+
 
     /**
      * Zwraca płeć.

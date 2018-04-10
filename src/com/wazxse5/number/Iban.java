@@ -20,17 +20,7 @@ public class Iban extends Number {
      * Sprawdza poprawność numeru.
      */
     @Override public void validate() {
-        boolean ibanGood = true;
-        int ibanLength;
-
-        if (super.getNumber().length() >= 2) {
-            String countryCode = super.getNumber().substring(0, 2);
-            ibanLength = ibanCountryLength.getIbanLength(countryCode);
-            if (ibanLength == -1) ibanGood = false;
-            else if (super.getNumber().length() != ibanLength) ibanGood = false;
-        } else ibanGood = false;
-
-        if (ibanGood) {
+        if (isGood()) {
             String transformation = super.getNumber().substring(4) + super.getNumber().substring(0, 4);
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < super.getNumber().length(); i++) {
@@ -42,6 +32,21 @@ public class Iban extends Number {
                 super.setCorrect(true);
             }
         }
+    }
+
+    /**
+     * Sprawdza czy numer ma poprawną strukturę: długość, odpowiednie znaki itp
+     * @return true jeśli ma poprawną strukturę
+     */
+    @Override public boolean isGood() {
+        boolean ibanGood = true;
+        if (super.getNumber().length() >= 2) {
+            String countryCode = super.getNumber().substring(0, 2);
+            int ibanLength = ibanCountryLength.getIbanLength(countryCode);
+            if (ibanLength == -1) ibanGood = false;
+            else if (super.getNumber().length() != ibanLength) ibanGood = false;
+        } else ibanGood = false;
+        return ibanGood;
     }
 
     /**

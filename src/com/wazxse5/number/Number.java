@@ -34,11 +34,19 @@ public abstract class Number {
     public abstract void validate();
 
     /**
+     * Sprawdza czy numer ma poprawną strukturę: długość, odpowiednie znaki itp
+     *
+     * @return true jeśli ma poprawną strukturę
+     */
+    public abstract boolean isGood();
+
+    /**
      * Zwraca informacje które można wywnioskować na podstawie numeru.
      *
      * @return informacje w postaci String
      */
     public abstract String getAdditionalInfo();
+
 
     /**
      * Zwraca numer.
@@ -65,6 +73,7 @@ public abstract class Number {
     public boolean isValidated() {
         return validated;
     }
+
 
     /**
      * Ustawia poprawność numeru.

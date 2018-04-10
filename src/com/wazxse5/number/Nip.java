@@ -20,24 +20,32 @@ public class Nip extends Number {
      */
     @Override
     public void validate() {
-        boolean nipGood = true;
         int[] tab = new int[10];
         int checksum = 0;
 
-        if (super.getNumber() == null) nipGood = false;
-        if (super.getNumber().length() != 10) nipGood = false;
-
-        if (nipGood) {
+        if (isGood()) {
+            // Wczytanie numeru jako tablica int
             for (int i = 0; i < 10; i++) {
                 tab[i] = Character.getNumericValue(super.getNumber().charAt(i));
             }
-
+            // Sprawdzenie warunków poprawności
             for (int i = 0; i < 9; i++) checksum += tab[i] * weightTable[i];
             checksum = checksum % 11;
             super.setCorrect(checksum == tab[9]);
         }
-
         super.setValidated();
+    }
+
+    /**
+     * Sprawdza czy numer ma poprawną strukturę: długość, odpowiednie znaki itp
+     *
+     * @return true jeśli ma poprawną strukturę
+     */
+    @Override public boolean isGood() {
+        boolean nipGood = true;
+        if (super.getNumber() == null) nipGood = false;
+        if (super.getNumber().length() != 10) nipGood = false;
+        return nipGood;
     }
 
     /**
