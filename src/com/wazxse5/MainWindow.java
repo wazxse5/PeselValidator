@@ -23,11 +23,11 @@ public class MainWindow extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Załadowanie pliku fxml, czyli widoku okna
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/MainScreen.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/MainScreen.fxml"));
         Parent parent = loader.load();
         Scene scene = new Scene(parent);
         MainController controller = loader.getController();
-        parent.getStylesheets().add(this.getClass().getResource("fxml/mainStyle.css").toExternalForm());
+        parent.getStylesheets().add(this.getClass().getResource("/fxml/mainStyle.css").toExternalForm());
 
         // Załadowanie ustawień programu
         mainSettings = new MainSettings(primaryStage, controller);

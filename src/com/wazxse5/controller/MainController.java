@@ -71,13 +71,7 @@ public class MainController {
 
         // Dodanie listenera na zmianę wprowadzonego numeru
         numberTF.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (this.number != null) {
-                this.number.setNumber(newValue);
-                if (numberTF.getText().equals("")) {
-                    resultCB.setSelected(false);
-                    resultCB.setText("Nic nie wpisano");
-                } else validateNumber();
-            }
+            validateNumber();
             formatIban();
         });
 
@@ -183,7 +177,7 @@ public class MainController {
     public String getSelectedNumberName() {
         return selectedNumberName.getValue();
     }
-    
+
     public void setNumberText(String numberText) {
         numberTF.setText(numberText);
     }
