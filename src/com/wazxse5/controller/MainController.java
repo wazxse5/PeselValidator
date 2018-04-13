@@ -83,6 +83,7 @@ public class MainController {
         numberTitleLab.textProperty().bind(Bindings.concat("Wprowadź numer ", selectedNumberName, ":"));
 
 
+        // Ustawienie fokusa na pole do wpisywania numeru
         Platform.runLater(() -> numberTF.requestFocus());
     }
 

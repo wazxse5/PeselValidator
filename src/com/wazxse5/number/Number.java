@@ -16,7 +16,6 @@ public abstract class Number {
      * @param number numer w postaci <code>String</code>
      */
     public Number(String number) {
-        System.out.println("Number.Number " + number);
         number = number.trim();
         number = number.replaceAll("\\s+", "");
         number = number.toUpperCase();
