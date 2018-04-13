@@ -29,7 +29,7 @@ public class MainController {
     private StringProperty selectedNumberName;       // nazwa zaznaczonego numeru (PESEL, NIP itd.)
 
     @FXML private ListView<String> numberListView;   // służy do wyboru numeru do walidacji
-    @FXML private Label numberTitleLab;            // podpis pola tekstowego do wprowadzania numeru
+    @FXML private Label numberTitleLab;              // podpis pola tekstowego do wprowadzania numeru
     @FXML private TextField numberTF;                // pole tekstowe do wprowadzania numeru
     @FXML private CheckBox resultCB;                 // informuje o poprawności numeru po walidacji
     @FXML private Label resultInfoLab;               // wyświetla dodatkowe info możliwe do uzyskania z numeru

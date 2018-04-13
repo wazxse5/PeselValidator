@@ -21,13 +21,18 @@ public class Iban extends Number {
      */
     @Override public void validate() {
         if (isGood()) {
-            String transformation = super.getNumber().substring(4) + super.getNumber().substring(0, 4);
+            // transformacja numeru, pierwsze cztery znaki idą na koniec numeru
+            String transformated = super.getNumber().substring(4) + super.getNumber().substring(0, 4);
+
+            // zamiana wszystkich liter na odpowiadajacee im wartości
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < super.getNumber().length(); i++) {
-                builder.append(IbanSettings.getCharValueAsString(transformation.charAt(i)));
+                String c = getCharValueAsString(transformated.charAt(i));
+                builder.append(c);
             }
-            BigInteger numberBI = new BigInteger(builder.toString());
 
+            // obliczenie reszty z dzielenia przez 97
+            BigInteger numberBI = new BigInteger(builder.toString());
             if (numberBI.mod(BigInteger.valueOf(97)).compareTo(BigInteger.valueOf(1)) == 0) {
                 super.setCorrect(true);
             }
@@ -58,6 +63,13 @@ public class Iban extends Number {
         return null;
     }
 
+    /**
+     * Przekształca String do postaci numeru konta bankowego.
+     * Co cztery znaki dodaje spacje.
+     *
+     * @param ibanText tekst który ma być sformatowany
+     * @return sformatowany tekst
+     */
     public static String formatIban(String ibanText) {
         ibanText = ibanText.trim();
         ibanText = ibanText.replaceAll("\\s", "");
@@ -66,10 +78,26 @@ public class Iban extends Number {
         StringBuilder formattedIban = new StringBuilder();
         for (int i = 0; i < ibanText.length(); i += 4) {
             if (i + 4 < ibanText.length()) {
-                formattedIban.append(ibanText.substring(i, i + 4));
+                formattedIban.append(ibanText, i, i + 4);
                 formattedIban.append(" ");
             } else formattedIban.append(ibanText.substring(i));
         }
         return formattedIban.toString().trim();
+    }
+
+    /**
+     * Zwraca odpowiednią wartość liczbową w postaci String.
+     * Dla cyfry zwraca ją samą jako String.
+     * Dla litery dla A zwraca 10, dla B zwraca 11, dla C zwraca 12 itd.
+     *
+     * @param character znak dla którego wartość ma być zwrócona
+     * @return dla cyfry reprezentacja String, dla litery A=10, B=11, C=12 itd.
+     */
+    public static String getCharValueAsString(char character) {
+        if (Character.isLetter(character)) {
+            int charValue = (int) character;
+            charValue -= 55;
+            return String.valueOf(charValue);
+        } else return String.valueOf(character);
     }
 }

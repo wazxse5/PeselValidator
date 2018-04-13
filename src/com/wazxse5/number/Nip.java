@@ -44,7 +44,7 @@ public class Nip extends Number {
     @Override public boolean isGood() {
         boolean nipGood = true;
         if (super.getNumber() == null) nipGood = false;
-        if (super.getNumber().length() != 10) nipGood = false;
+        else if (super.getNumber().length() != 10) nipGood = false;
         return nipGood;
     }
 

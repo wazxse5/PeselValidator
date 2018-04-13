@@ -71,7 +71,7 @@ public class Pesel extends Number {
     @Override public boolean isGood() {
         boolean peselGood = true;
         if (super.getNumber() == null) peselGood = false;
-        if (super.getNumber().length() != 11) peselGood = false;
+        else if (super.getNumber().length() != 11) peselGood = false;
         return peselGood;
     }
 

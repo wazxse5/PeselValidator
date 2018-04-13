@@ -22,7 +22,7 @@ public class Regon extends Number {
             regonLength = super.getNumber().length();
             tab = new int[regonLength];
 
-            // wczta
+            // wczytanie numeru jako tablica int
             for (int i = 0; i < regonLength; i++) {
                 tab[i] = Character.getNumericValue(super.getNumber().charAt(i));
             }
@@ -45,7 +45,7 @@ public class Regon extends Number {
     @Override public boolean isGood() {
         boolean regonGood = true;
         if (super.getNumber() == null) regonGood = false;
-        if (super.getNumber().length() != 9 && super.getNumber().length() != 14) regonGood = false;
+        else if (super.getNumber().length() != 9 && super.getNumber().length() != 14) regonGood = false;
         return regonGood;
     }
 
