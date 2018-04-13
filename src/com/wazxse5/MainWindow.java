@@ -26,11 +26,11 @@ public class MainWindow extends Application {
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/MainScreen.fxml"));
         Parent parent = loader.load();
         Scene scene = new Scene(parent);
-        MainController controller = loader.getController();
+        MainController mainController = loader.getController();
         parent.getStylesheets().add(this.getClass().getResource("/fxml/mainStyle.css").toExternalForm());
 
         // Załadowanie ustawień programu
-        mainSettings = new MainSettings(primaryStage, controller);
+        mainSettings = new MainSettings(primaryStage, mainController);
         mainSettings.load();
         mainSettings.apply();
 

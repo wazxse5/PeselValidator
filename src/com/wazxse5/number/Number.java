@@ -16,6 +16,12 @@ public abstract class Number {
      * @param number numer w postaci <code>String</code>
      */
     public Number(String number) {
+        this.number = prepareNumber(number);
+        this.validated = false;
+        this.correct = false;
+    }
+
+    private String prepareNumber(String number) {
         number = number.trim();
         number = number.replaceAll("\\s+", "");
         number = number.toUpperCase();
@@ -23,9 +29,7 @@ public abstract class Number {
         for (char c : number.toCharArray()) {
             if (Character.isLetterOrDigit(c)) builder.append(c);
         }
-        this.number = builder.toString();
-        this.validated = false;
-        this.correct = false;
+        return builder.toString();
     }
 
     /**
@@ -49,7 +53,7 @@ public abstract class Number {
 
 
     public void setNumber(String number) {
-        this.number = number;
+        this.number = prepareNumber(number);
         this.validated = false;
         this.correct = false;
     }
@@ -79,7 +83,6 @@ public abstract class Number {
     public boolean isValidated() {
         return validated;
     }
-
 
     /**
      * Ustawia poprawność numeru.

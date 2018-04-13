@@ -71,6 +71,7 @@ public class MainController {
 
         // Dodanie listenera na zmianę wprowadzonego numeru
         numberTF.textProperty().addListener((observable, oldValue, newValue) -> {
+            number.setNumber(newValue);
             validateNumber();
             formatIban();
         });
