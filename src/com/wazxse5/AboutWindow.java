@@ -12,7 +12,7 @@ import java.io.IOException;
 public class AboutWindow {
 
     public AboutWindow(Window owner) {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/AboutScreen.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/AboutScreen.fxml"));
         try {
             Scene scene = new Scene(loader.load());
             Stage aboutStage = new Stage();

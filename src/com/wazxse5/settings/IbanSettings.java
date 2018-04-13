@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Ma za zadanie wczytać i przechować informacje o dłogości numerów Iban.
+ * Każdy kraj ma własną stałą długość numeru Iban.
+ */
 public class IbanSettings {
     private Properties countryIbanLength;
 
@@ -37,19 +41,4 @@ public class IbanSettings {
         return length;
     }
 
-    /**
-     * Zwraca odpowiednią wartość liczbową w postaci String.
-     * Dla cyfry zwraca ją samą jako String.
-     * Dla litery dla A zwraca 10, dla B zwraca 11, dla C zwraca 12 itd.
-     *
-     * @param character znak dla którego wartość ma być zwrócona
-     * @return dla cyfry reprezentacja String, dla litery A=10, B=11, C=12 itd.
-     */
-    public static String getCharValueAsString(char character) {
-        if (Character.isLetter(character)) {
-            int charValue = (int) character;
-            charValue -= 55;
-            return String.valueOf(charValue);
-        } else return String.valueOf(character);
-    }
 }

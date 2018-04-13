@@ -13,18 +13,16 @@ public class Regon extends Number {
      * Sprawdza poprawność numeru.
      */
     @Override public void validate() {
-        boolean regonGood = true;
         int regonLength;
         int[] tab;
         int checksum = 0;
 
-        if (super.getNumber() == null) regonGood = false;
-        if (super.getNumber().length() != 9 && super.getNumber().length() != 14) regonGood = false;
-
-        if (regonGood) {
+        if (isGood()) {
+            // wczytanie długości numeru (może być 9 lub 14)
             regonLength = super.getNumber().length();
             tab = new int[regonLength];
 
+            // wczytanie numeru jako tablica int
             for (int i = 0; i < regonLength; i++) {
                 tab[i] = Character.getNumericValue(super.getNumber().charAt(i));
             }
@@ -38,6 +36,17 @@ public class Regon extends Number {
             super.setCorrect(checksum == tab[regonLength - 1]);
         }
         super.setValidated();
+    }
+
+    /**
+     * Sprawdza czy numer ma poprawną strukturę: długość, odpowiednie znaki itp
+     * @return true jeśli ma poprawną strukturę
+     */
+    @Override public boolean isGood() {
+        boolean regonGood = true;
+        if (super.getNumber() == null) regonGood = false;
+        else if (super.getNumber().length() != 9 && super.getNumber().length() != 14) regonGood = false;
+        return regonGood;
     }
 
     /**
