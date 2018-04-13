@@ -7,8 +7,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -35,6 +33,9 @@ public class MainController {
     @FXML private Label resultInfoLab;               // wyświetla dodatkowe info możliwe do uzyskania z numeru
     @FXML private Label resultChecksumLab;           // wyświetla informacje o obliczonej sumie kontrolnej
 
+    public MainController() {
+        number = new Pesel("");
+    }
 
     /**
      * Inicjalizuje wszystkie kontrolki, ich zawartość i listenery
@@ -46,23 +47,47 @@ public class MainController {
         numberListView.setItems(numberNames);
         // ustawienie zaznaczenia PESEL na liście
         numberListView.getSelectionModel().select("PESEL");
-
-
-        // Utworzenie głównego listenera
-        MyListener listener = new MyListener(this);
+        // Ustawienie listenera na zmianę zaznaczonego numeru na liście wyboru
+        numberListView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
+            String numberText = numberTF.getText();
+            switch (selectedNumberName.getValue()) {
+                case "PESEL":
+                    number = new Pesel(numberText);
+                    break;
+                case "NIP":
+                    number = new Nip(numberText);
+                    break;
+                case "REGON":
+                    number = new Regon(numberText);
+                    break;
+                case "IBAN":
+                    number = new Iban(numberText);
+                    break;
+            }
+            validateNumber();
+            formatIban();
+        }));
 
 
         // Dodanie listenera na zmianę wprowadzonego numeru
-        numberTF.textProperty().addListener(listener);
+        numberTF.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (this.number != null) {
+                this.number.setNumber(newValue);
+                if (numberTF.getText().equals("")) {
+                    resultCB.setSelected(false);
+                    resultCB.setText("Nic nie wpisano");
+                } else validateNumber();
+            }
+            formatIban();
+        });
 
 
         selectedNumberName = new SimpleStringProperty();
         // Zbindowanie do aktualnie zaznaczonego numeru w ListView
         selectedNumberName.bind(numberListView.getSelectionModel().selectedItemProperty());
-        // Zbindowanie zaznaczonego numeru do Labala który zachęca do wprowadzenia numeru
+        // Zbindowanie zaznaczonego numeru do Labela który zachęca do wprowadzenia numeru
         numberTitleLab.textProperty().bind(Bindings.concat("Wprowadź numer ", selectedNumberName, ":"));
-        // Ustawienie listenera na zmianę numeru
-        numberListView.getSelectionModel().selectedItemProperty().addListener(listener);
+
 
         Platform.runLater(() -> numberTF.requestFocus());
     }
@@ -73,26 +98,9 @@ public class MainController {
 
     /**
      * Sprawdza poprawność wprowadzonego numeru.
-     * Tworzy odpowiedni obiekt numeru, a następnie wywołuje na nim metodę {@link Number#validate()}.
      * Jeśli numer jest poprawny to pobiera i wyświetla odpowiednie informacje.
      */
     private void validateNumber() {
-        // wybór odpowiedniego rodzaju numeru
-        switch (selectedNumberName.getValue()) {
-            case "PESEL":
-                number = new Pesel(numberTF.getText());
-                break;
-            case "NIP":
-                number = new Nip(numberTF.getText());
-                break;
-            case "REGON":
-                number = new Regon(numberTF.getText());
-                break;
-            case "IBAN":
-                number = new Iban(numberTF.getText());
-                break;
-        }
-
         number.validate();
 
         // ustawienie pól na odpowiednie wartości
@@ -105,6 +113,22 @@ public class MainController {
             resultCB.setText("NIE, niepoprawny");
             resultInfoLab.setText("");
         }
+    }
+
+    /**
+     * Formatuje zawartość pola do wprowadzania numeru.
+     * Wykorzystuje funkcję {@link Iban#formatIban(String)}
+     * Ta funkcja jest wykorzystywana w listenerach
+     */
+    private void formatIban() {
+        Platform.runLater(() -> {
+            if (selectedNumberName.get().equals("IBAN")) {
+                numberTF.setText(Iban.formatIban(numberTF.getText()));
+            } else {
+                numberTF.setText(numberTF.getText().replaceAll("\\s", ""));
+            }
+            numberTF.end();
+        });
     }
 
     /**
@@ -172,32 +196,5 @@ public class MainController {
         Platform.exit();
     }
 
-
-    /**
-     * Klasa ma udostępniać lister który reafuje na zmiane wprowadzonego numeru lub typu numeru
-     */
-    class MyListener implements ChangeListener<String> {
-        private MainController mainController;
-
-        MyListener(MainController mainController) {
-            this.mainController = mainController;
-        }
-
-        @Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            if (numberTF.getText().equals("")) {
-                resultCB.setSelected(false);
-                resultCB.setText("Nic nie wpisano");
-            } else mainController.validateNumber();
-
-            Platform.runLater(() -> {
-                if (selectedNumberName.get().equals("IBAN")) {
-                    numberTF.setText(Iban.formatIban(numberTF.getText()));
-                } else {
-                    numberTF.setText(numberTF.getText().replaceAll("\\s", ""));
-                }
-                numberTF.end();
-            });
-        }
-    }
 }
 

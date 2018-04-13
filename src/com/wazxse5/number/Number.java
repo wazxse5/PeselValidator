@@ -6,7 +6,7 @@ package com.wazxse5.number;
  */
 public abstract class Number {
 
-    private final String number;    // Wartość numeru konkretnego numeru w postaci String
+    private String number;    // Wartość numeru konkretnego numeru w postaci String
     private boolean validated;      // czy poprawność numeru była sprawdzana
     private boolean correct;        // czy numer jest poprawny
 
@@ -16,6 +16,7 @@ public abstract class Number {
      * @param number numer w postaci <code>String</code>
      */
     public Number(String number) {
+        System.out.println("Number.Number " + number);
         number = number.trim();
         number = number.replaceAll("\\s+", "");
         number = number.toUpperCase();
@@ -47,6 +48,12 @@ public abstract class Number {
      */
     public abstract String getAdditionalInfo();
 
+
+    public void setNumber(String number) {
+        this.number = number;
+        this.validated = false;
+        this.correct = false;
+    }
 
     /**
      * Zwraca numer.
