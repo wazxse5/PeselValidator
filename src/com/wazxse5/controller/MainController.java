@@ -1,6 +1,7 @@
 package com.wazxse5.controller;
 
 import com.wazxse5.AboutWindow;
+import com.wazxse5.NumberInfoWindow;
 import com.wazxse5.number.*;
 import com.wazxse5.number.Number;
 import javafx.application.Platform;
@@ -108,6 +109,7 @@ public class MainController {
             resultCB.setSelected(false);
             resultCB.setText("NIE, niepoprawny");
             resultInfoLab.setText("");
+            if (numberTF.getText().isEmpty()) resultCB.setText("Nic nie wpisano");
         }
     }
 
@@ -166,6 +168,10 @@ public class MainController {
      */
     @FXML public void showAboutWindow() {
         new AboutWindow(this.numberTF.getScene().getWindow());
+    }
+
+    @FXML public void showNumberInfoWindow() {
+        new NumberInfoWindow(this.selectedNumberName.getValue(), this.numberTF.getScene().getWindow());
     }
 
 /////////////////////////////////////////////////////////////

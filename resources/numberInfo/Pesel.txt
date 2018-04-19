@@ -1,0 +1,4 @@
+Powszechny Elektroniczny System Ewidencji Ludności (PESEL) – centralny zbiór danych prowadzony w Polsce przez ministra właściwego do spraw informatyzacji na mocy ustawy o ewidencji ludności.
+Potocznie mianem PESEL określa się również numer ewidencyjny osoby fizycznej wykorzystywany w tym rejestrze.
+
+Numer PESEL jest to 11-cyfrowy stały symbol numeryczny jednoznacznie identyfikujący określoną osobę fizyczną.

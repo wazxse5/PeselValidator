@@ -1,0 +1,4 @@
+International Bank Account Number (IBAN) – międzynarodowy standard numeracji kont bankowych.
+Kod IBAN został utworzony, by wspomóc obsługę płatności w Unii Europejskiej. Klienci, zwłaszcza osoby fizyczne oraz małe i średnie przedsiębiorstwa, często napotykają na problemy związane z różnymi standardami bankowości na świecie.
+
+Decyzja o długości tego bloku należy do poszczególnych krajów, z tym, że dany kraj musi posiadać jedną, określoną długość.

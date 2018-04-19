@@ -23,7 +23,7 @@ public class AboutWindow {
             aboutStage.setTitle("O programie");
             aboutStage.setResizable(false);
             aboutStage.initOwner(owner);
-            aboutStage.initModality(Modality.APPLICATION_MODAL);
+            aboutStage.initModality(Modality.WINDOW_MODAL);
 
             aboutStage.setScene(scene);
             aboutStage.show();

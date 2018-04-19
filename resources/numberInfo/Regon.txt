@@ -1,0 +1,4 @@
+REjestr GOspodarki NArodowej (REGON) – rejestr prowadzony przez Prezesa Głównego Urzędu Statystycznego.
+Rejestr ten jest bieżąco aktualizowanym zbiorem informacji o podmiotach gospodarki narodowej prowadzonym w systemie informatycznym w postaci centralnej bazy danych oraz terenowych baz danych posadowionych w 16 urzędach statystycznych.
+
+Numer REGON to 9-cyfrowy lub 14-cyfrowy numer podmiotu gospodarki narodowej w powyższym rejestrze.
