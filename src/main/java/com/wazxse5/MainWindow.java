@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 public class MainWindow extends Application {
     private MainSettings mainSettings;
 
-    public static void main(String[] args) {
+    public static void run(String[] args) {
         Application.launch(args);
     }
 
